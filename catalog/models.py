@@ -30,7 +30,7 @@ class Track(BaseModel):
         ES = 'ES', 'Spanish'
 
     # example USEE10001993
-    isrc = models.CharField(max_length=12, validators=[validate_isrc])
+    isrc = models.CharField('ISRC', max_length=12, validators=[validate_isrc])
     artist = models.ForeignKey('artist.Artist', related_name='tracks', on_delete=models.PROTECT)
     name = models.CharField(max_length=250)
     duration = models.PositiveIntegerField(null=True) # in seconds / ms
@@ -43,7 +43,7 @@ class Track(BaseModel):
     is_explicit = models.BooleanField(default=False)
     
     record_type = models.CharField(max_length=10, choices=RecordType.choices, default=RecordType.STUDIO)
-    bpm = models.PositiveIntegerField(blank=True, null=True)
+    bpm = models.PositiveIntegerField('BPM', blank=True, null=True)
     language = models.CharField(max_length=2, choices=Language.choices, blank=True)
     lyrics = models.TextField(blank=True)
 

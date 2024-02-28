@@ -28,9 +28,12 @@ class Command(BaseCommand):
                 )
 
                 song_length = None
-                if row['SONG LENGTH']:
-                    song_min, song_sec = row['SONG LENGTH'].split(':')
-                    duration = int(song_min) * 60 + int(song_sec)
+
+                LANGS = {
+                    'Spanish': 'ES',
+                    'English': 'EN',
+                }
+                language = LANGS.get(row['LANGUAGE(S)'], None)
 
                 track, created = Track.objects.get_or_create(
                     isrc=row['SONG ISRC CODE'],
@@ -46,7 +49,7 @@ class Command(BaseCommand):
                         'is_explicit': row['EXPLICIT LYRICS?'].strip().lower() == 'yes',
                         'record_type': Track.RecordType.STUDIO if row['HOW WAS IT RECORDED?'].strip().lower() == 'studio' else None,
                         'bpm': int(row['BPM']) if row['BPM'] else None,
-                        'language': row['LANGUAGE(S)'] if row['LANGUAGE(S)'] else None,
+                        'language': language,
                         'lyrics': row['LYRICS'] if row['LYRICS'] else None,
                     }
                 )

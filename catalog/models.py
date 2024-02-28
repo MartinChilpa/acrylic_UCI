@@ -11,9 +11,18 @@ from catalog.validators import validate_isrc
 class Genre(BaseModel):
     name = models.CharField(max_length=80)
     code = models.SlugField(max_length=80, unique=True)
+    
+    class Meta:
+        ordering = ['name']
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        # Generate slug from title if not present
+        if not self.slug:
+            self.slug = slugify(self.title)
+        super(BlogPost, self).save(*args, **kwargs)
 
 
 def get_upload_path(instance, filename):

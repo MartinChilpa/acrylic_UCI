@@ -56,7 +56,7 @@ class Command(BaseCommand):
                         'is_remix': row['IS IT A REMIX?'].strip().lower() == 'yes',
                         'is_instrumental': row['IS IT AN INSTRUMENTAL?'].strip().lower() == 'yes',
                         'is_explicit': row['EXPLICIT LYRICS?'].strip().lower() == 'yes',
-                        'record_type': Track.RecordType.STUDIO if row['HOW WAS IT RECORDED?'].strip().lower() == 'studio' else None,
+                        #'record_type': Track.RecordType.STUDIO if row['HOW WAS IT RECORDED?'].strip().lower() == 'studio' else None,
                         'bpm': bpm,
                         'language': language,
                         'lyrics': row['LYRICS'] if row['LYRICS'] else '',

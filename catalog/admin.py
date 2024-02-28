@@ -21,7 +21,7 @@ class TrackAdmin(admin.ModelAdmin):
 
 
 @admin.register(PublishingSplit)
-class PublishingSplitAdmin(BaseModel):
+class PublishingSplitAdmin(admin.ModelAdmin):
     list_display = ['track', 'owner_name', 'owner_email', 'percent']
 
 

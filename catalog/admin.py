@@ -17,3 +17,4 @@ class TrackAdmin(admin.ModelAdmin):
     list_filter = ['released', 'is_remix', 'is_cover', 'is_instrumental', 'created', 'updated']
     search_fields = ['name', 'duration', 'artist__name']
     raw_id_fields = ['artist']
+    filter_horizontal = ['genres', 'additional_main_artists', 'featured_artists']

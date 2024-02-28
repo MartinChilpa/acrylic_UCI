@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from catalog.models import Genre, Track
+from catalog.models import Genre, Track, PublishingSplit, MasterSplit
 
 
 @admin.register(Genre)
@@ -18,3 +18,13 @@ class TrackAdmin(admin.ModelAdmin):
     search_fields = ['name', 'duration', 'artist__name']
     raw_id_fields = ['artist']
     filter_horizontal = ['genres', 'additional_main_artists', 'featured_artists']
+
+
+@admin.register(PublishingSplit)
+class PublishingSplitAdmin(BaseModel):
+    list_display = ['track', 'owner_name', 'owner_email', 'percent']
+
+
+@admin.register(MasterSplit)
+class MasterSplitAdmin(admin.ModelAdmin):
+    list_display = ['track', 'owner_name', 'owner_email', 'percent']

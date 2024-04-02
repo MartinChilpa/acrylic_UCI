@@ -11,6 +11,6 @@ from artist.models import Artist
 
 class ArtistViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Artist.active.all()
+    lookup_field = 'uuid'
     serializer_class = ArtistSerializer
     pagination_class = StandardPagination
-    

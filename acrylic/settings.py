@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     # 3rd. party apps
     'django_countries',
     'taggit',
+    'drf_spectacular',
+    'rest_framework',
     # project apps
     'common',
     'artist',
@@ -142,8 +144,24 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 FORCE_LOWERCASE_TAGS = True
 
 
+REST_FRAMEWORK = {
+    # YOUR SETTINGS
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Acrylic API',
+    'DESCRIPTION': 'Acrylic Platform API',
+    'VERSION': '1.0',
+    'SERVE_INCLUDE_SCHEMA': True,
+    # OTHER SETTINGS
+}
+
+
 # prevent whitenoise: prevent Django throwing an error for references of static files which don't exist
 WHITENOISE_MANIFEST_STRICT = False
+
 
 
 # Activate Django-Heroku.

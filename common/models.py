@@ -33,3 +33,13 @@ class BaseModel(models.Model):
             PostgresIndex(fields=['created'], name='%(app_label)s_%(class)s_created_idx'),
             PostgresIndex(fields=['updated'], name='%(app_label)s_%(class)s_updated_idx'),
         ]
+
+
+class ActiveManager(models.Manager):
+    """
+    Active manager for models with an 'is_active' boolean field
+    """
+    def get_queryset(self) -> models.QuerySet:
+        return super().get_queryset().filter(is_active=True)
+
+

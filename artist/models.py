@@ -4,7 +4,7 @@ from django.db import models
 from django_countries.fields import CountryField
 from taggit.managers import TaggableManager
 
-from common.models import BaseModel
+from common.models import BaseModel, ActiveManager
 from catalog.validators import validate_isrc
 
 
@@ -13,8 +13,35 @@ class Artist(BaseModel):
     bio = models.TextField(blank=True)
     hometown = models.CharField(max_length=250)
     country = CountryField(default='ES', blank_label='(seleccionar)')
-    spotify_url = models.URLField(null=True, blank=True)
+    
     tags = TaggableManager()
+
+    # external IDs
+    chartmetric_id = models.CharField(max_length=100, blank=True)
+
+    # social
+    spotify_url = models.URLField(null=True, blank=True)
+    tiktok_url = models.URLField(null=True, blank=True)
+    twitter_url = models.URLField(null=True, blank=True)
+    youtube_url = models.URLField(null=True, blank=True)
+    twitch_url = models.URLField(null=True, blank=True)
+    facebook_url = models.URLField(null=True, blank=True)
+    shazam_url = models.URLField(null=True, blank=True)
+    soundcloud_url = models.URLField(null=True, blank=True)
+    pandora_url = models.URLField(null=True, blank=True)
+    instagram_url = models.URLField(null=True, blank=True)
+    itunes_url = models.URLField(null=True, blank=True)
+    amazonmusic_url = models.URLField(null=True, blank=True)
+    deezer_url = models.URLField(null=True, blank=True)
+
+    # stats
+
+    # active
+    is_active = models.BooleanField(default=True)
+
+    # managers
+    objects = models.Manager()
+    active = ActiveManager()
 
     class Meta:
         ordering = ['-name']

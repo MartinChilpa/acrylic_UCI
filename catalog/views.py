@@ -39,6 +39,7 @@ class TrackFilter(rest_filters.FilterSet):
 )
 class TrackViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = []
+    authentication_classes = []
     queryset = Track.objects.prefetch_related('genres', 'tags')  # Adjusted from Track.active.all() to simplify the example
     lookup_field = 'uuid'
     serializer_class = TrackSerializer
@@ -57,6 +58,7 @@ class TrackViewSet(viewsets.ReadOnlyModelViewSet):
 )
 class GenreViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = []
+    authentication_classes = []
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     pagination_class = StandardPagination
@@ -67,6 +69,7 @@ class GenreViewSet(viewsets.ReadOnlyModelViewSet):
 
 class SyncListViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = []
+    authentication_classes = []
     queryset = SyncList.objects.none()
     serializer_class = SyncListSerializer
     pagination_class = StandardPagination

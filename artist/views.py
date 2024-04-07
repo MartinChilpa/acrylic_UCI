@@ -65,7 +65,7 @@ class ArtistViewSet(viewsets.ReadOnlyModelViewSet):
     pagination_class = StandardPagination
     filter_backends = [rest_filters.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_class = ArtistFilter
-    search_fields = ['@name', '@bio', '=spotify_url', 'tags__name']
+    search_fields = ['name', 'bio', '=spotify_url', 'tags__name']
     ordering_fields = ['name', 'created', 'updated']    
 
     

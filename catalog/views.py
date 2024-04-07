@@ -51,7 +51,7 @@ class TrackViewSet(viewsets.ReadOnlyModelViewSet):
     pagination_class = StandardPagination  # Ensure this is defined somewhere
     filter_backends = [rest_filters.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_class = TrackFilter
-    search_fields = ['=uuid', '=isrc', '@name', '@artist__name', '=spotify_url']
+    search_fields = ['=uuid', '=isrc', 'name', 'artist__name', '=spotify_url']
     ordering_fields = ['name', 'created', 'updated']
 
 
@@ -69,7 +69,7 @@ class GenreViewSet(viewsets.ReadOnlyModelViewSet):
     pagination_class = StandardPagination
     lookup_field = 'uuid'
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
-    search_fields = ['=code', '@name']
+    search_fields = ['=code', 'name']
     ordering_fields = ['name']
 
 
@@ -81,7 +81,7 @@ class SyncListViewSet(viewsets.ReadOnlyModelViewSet):
     pagination_class = StandardPagination
     lookup_field = 'uuid'
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
-    search_fields = ['@name', '@description']
+    search_fields = ['name', 'description']
     ordering_fields = ['order']
 
     def get_queryset(self):
@@ -97,7 +97,7 @@ class MySyncListViewSet(viewsets.ModelViewSet):
     serializer_class = SyncListSerializer
     pagination_class = StandardPagination
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
-    search_fields = ['@name', '@description']
+    search_fields = ['name', 'description']
     ordering_fields = ['order']
 
     def get_queryset(self):

@@ -5,6 +5,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_registration.api.views.register import RegisterView
+from drf_spectacular.utils import extend_schema, OpenApiParameter, inline_serializer
 
 from common.api.pagination import StandardPagination
 from catalog.serializers import TrackSerializer
@@ -31,7 +32,9 @@ class MyTrackViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
         return user.artist.tracks.all()
     
 
-
+@extend_schema(
+    tags=['Artists'],
+)
 class ArtistViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Artist.active.all()
     lookup_field = 'uuid'

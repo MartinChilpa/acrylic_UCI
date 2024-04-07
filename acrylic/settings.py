@@ -163,7 +163,13 @@ SPECTACULAR_SETTINGS = {
     'VERSION': '1.0',
     'SERVE_INCLUDE_SCHEMA': True,
     'SCHEMA_PATH_PREFIX': r'^/api/v[0-9]',
+    'SCHEMA_PATH_PREFIX_TRIM': True,
+    'SERVERS': [
+        {'url': 'https://dev.platform.acrylic.la/api/v1/', 'description': 'Development'},
+        {'url': 'https://platform.acrylic.la/api/v1/', 'description': 'Production'},
+    ]
     # OTHER SETTINGS
+    
 }
 
 

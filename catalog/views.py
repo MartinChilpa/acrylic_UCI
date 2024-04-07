@@ -1,5 +1,6 @@
 from django_filters import rest_framework as rest_filters
 from rest_framework import viewsets, filters
+from drf_spectacular.utils import extend_schema, OpenApiParameter, inline_serializer
 from taggit.models import Tag
 from catalog.models import Track, Genre
 from catalog.serializers import TrackSerializer, GenreSerializer
@@ -24,6 +25,16 @@ class TrackFilter(rest_filters.FilterSet):
     #    return queryset.filter(tags__name__in=[tag.name for tag in value])
 
 
+@extend_schema(
+    tags=['Tracks'],
+    parameters=[
+        # Documenting search fields
+        OpenApiParameter(name='search', description='Search tracks by UUID, ISRC, name, or artist name', required=False, type=str),
+        # Documenting ordering fields
+        OpenApiParameter(name='ordering', description='Order by name, created, or updated', required=False, type=str),
+    ],
+    responses={200: TrackSerializer(many=True)}
+)
 class TrackViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = []
     queryset = Track.objects.all()  # Adjusted from Track.active.all() to simplify the example
@@ -36,6 +47,14 @@ class TrackViewSet(viewsets.ReadOnlyModelViewSet):
     ordering_fields = ['name', 'created', 'updated']
 
 
+@extend_schema(
+    tags=['Genres'],
+    parameters=[
+        OpenApiParameter(name='code', description='Search by code', required=False, type=str),
+        OpenApiParameter(name='name', description='Search by name', required=False, type=str),
+    ],
+    responses={200: GenreSerializer}
+)
 class GenreViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = []
     queryset = Genre.objects.all()

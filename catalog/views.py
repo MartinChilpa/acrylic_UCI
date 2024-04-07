@@ -22,7 +22,7 @@ class TrackFilter(rest_filters.FilterSet):
     tags = rest_filters.ModelMultipleChoiceFilter(queryset=Tag.objects.all(), to_field_name='name', method='tags_filter')
 
     def tags_filter(self, queryset, name, value):
-        return queryset.filter(publisher__in=value) 
+        return queryset.filter(tags__in=value) 
 
     class Meta:
         model = Track

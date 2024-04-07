@@ -66,6 +66,7 @@ class GenreViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = GenreSerializer
     pagination_class = StandardPagination
     lookup_field = 'uuid'
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['=code', '@name']
     ordering_fields = ['name']
 
@@ -77,6 +78,7 @@ class SyncListViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = SyncListSerializer
     pagination_class = StandardPagination
     lookup_field = 'uuid'
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['@name', '@description']
     ordering_fields = ['order']
 
@@ -89,6 +91,12 @@ class MySyncListViewSet(viewsets.ModelViewSet):
     serializer_class = SyncListSerializer
     permission_classes = [permissions.IsAuthenticated, IsArtistOwner]
     queryset = SyncList.objects.none()
+    lookup_field = 'uuid'
+    serializer_class = SyncListSerializer
+    pagination_class = StandardPagination
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['@name', '@description']
+    ordering_fields = ['order']
 
     def get_queryset(self):
         sync_list_tracks_prefetch = Prefetch('synclisttrack_set', queryset=SyncListTrack.objects.select_related('track'))

@@ -32,9 +32,6 @@ class MyTrackViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
         return user.artist.tracks.all()
     
 
-@extend_schema(
-    tags=['Artists'],
-)
 class ArtistViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Artist.active.all()
     lookup_field = 'uuid'

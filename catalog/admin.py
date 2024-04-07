@@ -1,6 +1,6 @@
 from django.contrib import admin
-
-from catalog.models import Genre, Track
+from django.db.models import Count
+from catalog.models import Genre, Track, SyncList, SyncListTrack
 
 
 @admin.register(Genre)
@@ -18,3 +18,31 @@ class TrackAdmin(admin.ModelAdmin):
     search_fields = ['name', 'duration', 'artist__name']
     raw_id_fields = ['artist']
     filter_horizontal = ['genres', 'additional_main_artists', 'featured_artists']
+
+
+
+class SyncListTrackInline(admin.TabularInline):
+    model = SyncListTrack
+    extra = 1
+    fields = ['track', 'order']
+    raw_id_fields = ['track']
+
+@admin.register(SyncList)
+class SyncListAdmin(admin.ModelAdmin):
+    list_display = ['uuid', 'name', 'artist', 'order', 'tracks_count', 'pinned', 'created', 'updated']
+    list_filter = ['pinned', 'created', 'updated']
+    search_fields = ['name', 'description', 'artist__name']
+    raw_id_fields = ['artist']
+    inlines = [SyncListTrackInline]
+
+    def get_queryset(self, request):
+        # Use 'annotate' to count the number of tracks for each SyncList
+        queryset = super().get_queryset(request)
+        queryset = queryset.annotate(_tracks_count=Count('tracks'))
+        return queryset
+
+    def tracks_count(self, obj):
+        # Use the annotated value for display
+        return obj._tracks_count
+    tracks_count.admin_order_field = '_tracks_count'
+    tracks_count.short_description = 'Tracks'

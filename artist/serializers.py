@@ -11,7 +11,8 @@ User = get_user_model()
 class ArtistSerializer(serializers.ModelSerializer):
     class Meta:
         model = Artist
-        fields = '__all__'
+        #fields = '__all__'
+        exclude = ['id']
 
 
 class RegisterArtistSerializer(DefaultRegisterUserSerializer):

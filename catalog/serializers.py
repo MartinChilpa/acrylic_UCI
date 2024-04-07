@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from taggit.models import Tag
-from catalog.models import Genre, Track
+from catalog.models import Genre, Track, SyncList, SyncListTrack
 from legal.serializers import MasterSplitSerializer
 
 
@@ -33,3 +33,24 @@ class TrackSerializer(serializers.ModelSerializer):
 
     def get_genre_names(self, obj):
         return [genre.name for genre in obj.genres.all()]
+
+
+class SyncListTrackSerializer(serializers.ModelSerializer):
+    track = TrackSerializer(read_only=True)
+    
+    class Meta:
+        model = SyncListTrack
+        fields = ['track', 'order']
+
+
+class SyncListSerializer(serializers.ModelSerializer):
+    tracks = SyncListTrackSerializer(source='synclisttrack_set', many=True, read_only=True)
+    
+    class Meta:
+        model = SyncList
+        fields = ['id', 'artist', 'name', 'description', 'order', 'pinned', 'tracks']
+
+    def create(self, validated_data):
+        # Ensure the SyncList is associated with the current artist.
+        validated_data['artist'] = self.context['request'].user.artist
+        return super().create(validated_data)

@@ -15,11 +15,11 @@ router = routers.DefaultRouter()
 router.register('artists', artist_views.ArtistViewSet)
 router.register('tracks', catalog_views.TrackViewSet)
 router.register('genres', catalog_views.GenreViewSet)
+router.register('synclists', catalog_views.SyncListViewSet)
 
 # artist dashboard
 router.register('me-artist/tracks', artist_views.MyTrackViewSet)
-
-
+router.register('me-artist/synclists', catalog_views.MySyncListViewSet)
 
 
 registration_urls = (
@@ -57,7 +57,7 @@ urlpatterns = [
         path('auth/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
         path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
         # path('auth/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
-        
+
         # API social auth
         path('auth/', include('rest_social_auth.urls_jwt_pair')),
         path('account/', include(registration_urls)),

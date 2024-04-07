@@ -94,3 +94,34 @@ class Track(BaseModel):
         spotify = spotipy.Spotify(auth_manager=SpotifyClientCredentials())
         results = spotify.search(q=f'isrc:{self.isrc}', type='track', market='ES')
         return [t for t in results['tracks']['items'] if t['external_ids']['isrc'] == self.isrc]
+
+
+class SyncList(BaseModel):
+    artist = models.ForeignKey('artist.Artist', related_name='synclists', on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+    # cover
+    order = models.PositiveIntegerField(default=0)
+    pinned = models.BooleanField(default=True, help_text='Pinned in artist profile.')
+    tracks = models.ManyToManyField('catalog.Track', through='catalog.SyncListTrack', related_name='synclists', blank=True)
+
+    def __str__(self):
+        return self.name 
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['order']),
+        ]
+
+
+class SyncListTrack(models.Model):
+    synclist = models.ForeignKey('catalog.SyncList', on_delete=models.CASCADE)
+    track = models.ForeignKey('catalog.Track', on_delete=models.CASCADE)
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ['order']
+        indexes = [
+            models.Index(fields=['order']),
+            models.Index(fields=['synclist', 'order']),
+        ]

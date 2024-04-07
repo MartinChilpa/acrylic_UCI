@@ -1,10 +1,14 @@
+from django.db.models import Prefetch
+from django.shortcuts import get_object_or_404
 from django_filters import rest_framework as rest_filters
-from rest_framework import viewsets, filters
-from drf_spectacular.utils import extend_schema, OpenApiParameter, inline_serializer
+from rest_framework import viewsets, filters, permissions, status, serializers
+from rest_framework.decorators import action
+from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample, inline_serializer
 from taggit.models import Tag
-from catalog.models import Track, Genre
-from catalog.serializers import TrackSerializer, GenreSerializer
 from common.api.pagination import StandardPagination
+from artist.permissions import IsArtistOwner
+from catalog.models import Track, Genre, SyncList, SyncListTrack
+from catalog.serializers import TrackSerializer, GenreSerializer, SyncListSerializer, SyncListTrackSerializer
 
 
 
@@ -26,18 +30,16 @@ class TrackFilter(rest_filters.FilterSet):
 
 
 @extend_schema(
-    tags=['Tracks'],
     parameters=[
         # Documenting search fields
         OpenApiParameter(name='search', description='Search tracks by UUID, ISRC, name, or artist name', required=False, type=str),
         # Documenting ordering fields
         OpenApiParameter(name='ordering', description='Order by name, created, or updated', required=False, type=str),
     ],
-    responses={200: TrackSerializer(many=True)}
 )
 class TrackViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = []
-    queryset = Track.objects.all()  # Adjusted from Track.active.all() to simplify the example
+    queryset = Track.objects.prefetch_related('genres', 'tags')  # Adjusted from Track.active.all() to simplify the example
     lookup_field = 'uuid'
     serializer_class = TrackSerializer
     pagination_class = StandardPagination  # Ensure this is defined somewhere
@@ -48,12 +50,10 @@ class TrackViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 @extend_schema(
-    tags=['Genres'],
     parameters=[
         OpenApiParameter(name='code', description='Search by code', required=False, type=str),
         OpenApiParameter(name='name', description='Search by name', required=False, type=str),
     ],
-    responses={200: GenreSerializer}
 )
 class GenreViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = []
@@ -63,3 +63,137 @@ class GenreViewSet(viewsets.ReadOnlyModelViewSet):
     lookup_field = 'uuid'
     search_fields = ['=code', '@name']
     ordering_fields = ['name']
+
+
+class SyncListViewSet(viewsets.ReadOnlyModelViewSet):
+    permission_classes = []
+    queryset = SyncList.objects.none()
+    serializer_class = SyncListSerializer
+    pagination_class = StandardPagination
+    lookup_field = 'uuid'
+    search_fields = ['@name', '@description']
+    ordering_fields = ['order']
+
+    def get_queryset(self):
+        sync_list_tracks_prefetch = Prefetch('synclisttrack_set', queryset=SyncListTrack.objects.select_related('track'))
+        return SyncList.objects.prefetch_related(sync_list_tracks_prefetch)
+
+
+class MySyncListViewSet(viewsets.ModelViewSet):
+    serializer_class = SyncListSerializer
+    permission_classes = [permissions.IsAuthenticated, IsArtistOwner]
+    queryset = SyncList.objects.none()
+
+    def get_queryset(self):
+        sync_list_tracks_prefetch = Prefetch('synclisttrack_set', queryset=SyncListTrack.objects.select_related('track'))
+        return self.request.user.artist.synclists.prefetch_related(sync_list_tracks_prefetch)
+
+    @extend_schema(
+        request=inline_serializer(
+            name='AddTracksSerializer',
+            fields={
+                'tracks': serializers.ListField(
+                    child=inline_serializer(
+                        name='TrackData',
+                        fields={
+                            'track_uuid': serializers.UUIDField(format='hex_verbose'),
+                            'order': serializers.IntegerField(required=False)
+                        }
+                    )
+                )
+            }
+        ),
+        responses={201: None},
+        methods=['POST'],
+        description="Add multiple tracks to a SyncList.",
+        examples=[
+            OpenApiExample(
+                name="Example payload",
+                description="This is an example payload for adding tracks to a SyncList.",
+                value=[
+                    {"track_uuid": "uuid-of-track-1", "order": 1},
+                    {"track_uuid": "uuid-of-track-2", "order": 2}
+                ],
+                request_only=True,  # This example only applies to the request
+            ),
+        ]
+    )
+    @action(detail=True, methods=['post'], url_path='add-tracks')
+    def add_tracks(self, request, pk=None):
+        synclist = self.get_object()
+        tracks_data = request.data.get('tracks', [])
+
+        if not isinstance(tracks_data, list) or not tracks_data:
+            return Response({"detail": "Tracks data must be a non-empty list."}, status=status.HTTP_400_BAD_REQUEST)
+
+        for track_data in tracks_data:
+            track_uuid = track_data.get('track_uuid')
+            order = track_data.get('order', 0)
+            track = get_object_or_404(Track, uuid=track_uuid)
+            
+            # Validate if the track belongs to the artist, if required
+            # if track.artist != request.user.artist:
+            #     continue
+            SyncListTrack.objects.update_or_create(
+                synclist=synclist,
+                track=track,
+                defaults={'order': order}
+            )
+
+        return Response({"detail": "Tracks added/updated successfully."}, status=status.HTTP_201_CREATED)
+
+    @extend_schema(
+        request=inline_serializer(
+            name='RemoveTracksSerializer',
+            fields={
+                'tracks': serializers.ListField(
+                    child=inline_serializer(
+                        name='TrackData',
+                        fields={
+                            'track_uuid': serializers.UUIDField(format='hex_verbose'),
+                            'order': serializers.IntegerField(required=False)
+                        }
+                    )
+                )
+            }
+        ),
+        responses={204: None},
+        methods=['POST'],
+        description="Remove a track or multiple tracks from a SyncList.",
+        examples=[
+            OpenApiExample(
+                name="Example payload for a single track",
+                description="This is an example payload for removing a single track from a SyncList.",
+                value={"track_uuid": "uuid-of-track-1"},
+                request_only=True,
+            ),
+            OpenApiExample(
+                name="Example payload for multiple tracks",
+                description="This is an example payload for removing multiple tracks from a SyncList.",
+                value={"track_uuid": ["uuid-of-track-1", "uuid-of-track-2"]},
+                request_only=True,
+            ),
+        ]
+    )
+    @action(detail=True, methods=['post'], url_path='remove-track')
+    def remove_track(self, request, pk=None):
+        synclist = self.get_object()
+        track_uuid = request.data.get('track_uuid')
+
+        if not track_uuid:
+            return Response({"detail": "Track ID is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # For removing multiple tracks, expect track_id to be a list and iterate.
+        if isinstance(track_id, list):
+            count = 0
+            for tuuid in track_uuid:
+                count += SyncListTrack.objects.filter(synclist=synclist, track__uuid=tuuid).delete()[0]
+            message = f"{count} tracks removed successfully." if count else "No tracks found to remove."
+            return Response({"detail": message}, status=status.HTTP_204_NO_CONTENT)
+
+        # For a single track removal
+        deleted, _ = SyncListTrack.objects.filter(synclist=synclist, track__uuid=track_uuid).delete()
+        if deleted:
+            return Response({"detail": "Track removed successfully."}, status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response({"detail": "Track not found in the SyncList."}, status=status.HTTP_404_NOT_FOUND)

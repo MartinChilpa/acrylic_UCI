@@ -35,7 +35,7 @@ class MyTrackViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
 
 
 class ArtistFilter(rest_filters.FilterSet):
-    country = rest_filters.ChoiceFilter(field_name='country', lookup_expr='exact')
+    #country = rest_filters.ChoiceFilter(field_name='country', lookup_expr='exact')
     tags = rest_filters.ModelMultipleChoiceFilter(queryset=Tag.objects.all(), to_field_name='name', method='tags_filter')
 
     def tags_filter(self, queryset, name, value):
@@ -43,7 +43,7 @@ class ArtistFilter(rest_filters.FilterSet):
 
     class Meta:
         model = Artist
-        fields = ['country', 'tags']
+        fields = ['tags']
 
 
 @extend_schema(

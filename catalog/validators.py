@@ -2,7 +2,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 import re
 
-isrc_pattern = re.compile(r'^[A-Z]{2}-[A-Z0-9]{3}-\d{2}-\d{5}$')
+isrc_pattern = re.compile(r'^[A-Z]{2}[A-Z0-9]{3}\d{2}\d{5}$')
 
 def validate_isrc(value):
     # Define the ISRC regex pattern

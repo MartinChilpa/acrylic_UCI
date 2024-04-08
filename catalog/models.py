@@ -50,7 +50,7 @@ class Track(BaseModel):
     duration = models.PositiveIntegerField(null=True) # in seconds / ms
     # total_uses
     #price
-    released = models.DateTimeField(blank=True, null=True)
+    released = models.DateField(blank=True, null=True)
     is_cover = models.BooleanField(default=False)
     is_remix = models.BooleanField(default=False)
     is_instrumental = models.BooleanField(default=False)

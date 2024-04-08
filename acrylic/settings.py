@@ -14,6 +14,9 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+ADMINS = [
+    ('Antonio Melé', 'antonio.mele@zenxit.com',),
+]
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -46,6 +49,7 @@ INSTALLED_APPS = [
     'social_django',  # django social auth
     'rest_social_auth',
     'rest_framework_simplejwt',
+    'django_ses',
     # project apps
     'common',
     'account',
@@ -105,6 +109,10 @@ DATABASES['OPTIONS'] = {
     'MAX_CONNS': 4,
 }
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'common.auth.EmailAuthBackend',
+]
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -142,11 +150,51 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+
+MEDIA_URL = os.environ.get('MEDIA_URL', '')
+
+APPEND_SLASH = True
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
+# Email settings
+EMAIL_BACKEND = 'django_ses.SESBackend'
+EMAIL_HOST = os.environ.get('EMAIL_HOST', '')
+EMAIL_PORT = 25
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+EMAIL_USE_TLS = True
+EMAIL_FROM = os.environ.get('EMAIL_FROM', '')
+DEFAULT_FROM_EMAIL = EMAIL_FROM
+AWS_SES_REGION_NAME = os.environ.get('AWS_SES_REGION_NAME', '')
+AWS_SES_REGION_ENDPOINT = os.environ.get('AWS_SES_REGION_ENDPOINT', '')
+# server mail for errors
+SERVER_EMAIL = os.environ.get('SERVER_EMAIL', '')
+
+# django-storages
+STORAGES = {
+    'default': {
+        'BACKEND': 'storages.backends.s3boto3.S3Boto3Storage'
+    },
+    'staticfiles': {
+        'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+    },
+}
+
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID', default='')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY', '')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME', '')
+# AWS_DEFAULT_ACL = 'private'
+AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME', '')
+AWS_IS_GZIPPED = True
+AWS_S3_ENDPOINT_URL = f'https://s3.{AWS_S3_REGION_NAME}.amazonaws.com'
+AWS_S3_FILE_OVERWRITE = False
+AWS_QUERYSTRING_AUTH = True
+AWS_QUERYSTRING_EXPIRE = 3600 * 24 # 1 day
 
 # django-tagging
 FORCE_LOWERCASE_TAGS = True
@@ -226,6 +274,10 @@ django_heroku.settings(locals())
 
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
+
+# fix django-heroku clash with STORAGES
+local_config = locals()
+del local_config['STATICFILES_STORAGE']
 
 sentry_sdk.init(
     dsn=config('SENTRY_DSN', default=''),

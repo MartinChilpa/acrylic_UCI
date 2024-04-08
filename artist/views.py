@@ -48,14 +48,14 @@ class ArtistFilter(rest_filters.FilterSet):
         fields = ['tags']
 
 
-@extend_schema(
-    parameters=[
-        # Documenting search fields
-        OpenApiParameter(name='search', description='Search artists by name, bio, Spotify URL or tags', required=False, type=str),
-        # Documenting ordering fields
-        OpenApiParameter(name='ordering', description='Order by name, created, or updated', required=False, type=str),
-    ],
-)    
+#@extend_schema(
+#    parameters=[
+#        # Documenting search fields
+#        OpenApiParameter(name='search', description='Search artists by name, bio, Spotify URL or tags', required=False, type=str),
+#        # Documenting ordering fields
+#        OpenApiParameter(name='ordering', description='Order by name, created, or updated', required=False, type=str),
+#    ],
+#)    
 class ArtistViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = []
     authentication_classes = []

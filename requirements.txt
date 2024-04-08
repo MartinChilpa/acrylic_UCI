@@ -23,3 +23,5 @@ django-filter==23.5
 hellosign-python-sdk==4.0.0
 WeasyPrint==61.2
 django-rest-registration==0.8.3
+django-ses[events]==3.5.2
+django-storages==1.14.2

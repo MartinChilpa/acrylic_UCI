@@ -7,6 +7,7 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExampl
 from taggit.models import Tag
 from common.api.pagination import StandardPagination
 from artist.permissions import IsArtistOwner
+from legal.sign import send_signature_request_for_ownership_validation
 from catalog.models import Track, Genre, SyncList, SyncListTrack
 from catalog.serializers import TrackSerializer, MyTrackSerializer, GenreSerializer, SyncListSerializer, SyncListTrackSerializer
 
@@ -74,6 +75,19 @@ class MyTrackViewSet(viewsets.ModelViewSet):
         when creating a new track.
         """
         serializer.save(artist=self.request.user.artist)
+
+    @extend_schema(
+        responses={201: None},
+        methods=['POST'],
+        description="Request track split sheet signatures to all master/publishing split owners via Drobpox Sign.",
+    )
+    @action(detail=True, methods=['post'], url_path='request-split-signatures')
+    def request_split_signatures(self, request, pk=None):
+        track = self.get_object()
+        # todo: check if there are any splits first
+        # generate document and send it to ...
+        send_signature_request_for_ownership_validation(track.id)
+        return Response({"detail": "Split sheet signatures requested."}, status=status.HTTP_200_OK)
 
 
 @extend_schema(

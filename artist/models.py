@@ -16,7 +16,7 @@ class Artist(BaseModel):
     hometown = models.CharField(max_length=250)
     country = CountryField(default='ES', blank_label='(seleccionar)')
     
-    tags = TaggableManager()
+    tags = TaggableManager(blank=True)
 
     # external IDs
     chartmetric_id = models.CharField(max_length=100, blank=True)

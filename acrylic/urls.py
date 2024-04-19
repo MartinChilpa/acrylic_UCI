@@ -8,6 +8,7 @@ API_VERSION = 'v1'
 
 from artist import views as artist_views
 from catalog import views as catalog_views
+from legal import views as legal_views
 from legal import webhooks as legal_webhooks
 
 
@@ -18,7 +19,9 @@ router.register('genres', catalog_views.GenreViewSet)
 router.register('synclists', catalog_views.SyncListViewSet)
 
 # artist dashboard
+router.register('my-artist', artist_views.MyArtistViewSet)
 router.register('my-artist/tracks', catalog_views.MyTrackViewSet)
+#router.register(r'my-artist/tracks/(?P<track_id>\d+)/master-splits', legal_views.MasterSplitViewSet, basename='master-split')
 router.register('my-artist/synclists', catalog_views.MySyncListViewSet)
 
 

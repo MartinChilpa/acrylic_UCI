@@ -71,7 +71,7 @@ class Track(BaseModel):
     additional_main_artists = models.ManyToManyField('artist.Artist', blank=True, related_name='other_tracks_main')
     featured_artists = models.ManyToManyField('artist.Artist', blank=True, related_name='other_tracks_featured')
 
-    tags = TaggableManager()
+    tags = TaggableManager(blank=True)
     #moods
     #cultures
     #instruments

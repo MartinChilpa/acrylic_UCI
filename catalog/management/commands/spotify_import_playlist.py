@@ -1,0 +1,89 @@
+import spotipy
+from spotipy.oauth2 import SpotifyClientCredentials
+from django.core.management.base import BaseCommand
+from django.conf import settings
+from artist.models import Artist
+from catalog.models import Track
+
+
+class Command(BaseCommand):
+    help = 'Imports tracks and artists from a specified Spotify playlist'
+    # https://open.spotify.com/playlist/2fuHQ3Dfe0xSbr5sibd1lV
+
+    def add_arguments(self, parser):
+        parser.add_argument('playlist_id', type=str, help='Spotify Playlist ID')
+
+    def handle(self, *args, **options):
+        playlist_id = options['playlist_id']
+        #token = self.get_spotify_token()
+        sp = self.get_spotify_instance()
+        tracks_data = self.get_playlist_tracks(sp, playlist_id)
+        self.load_tracks_and_artists(tracks_data)
+
+    def get_spotify_instance(self):
+        client_id = settings.SPOTIFY_CLIENT_ID
+        client_secret = settings.SPOTIFY_CLIENT_SECRET
+        spotify = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=client_id, client_secret=client_secret))
+        return spotify
+        results = spotify.search(q=f'isrc:{self.isrc}', type='track', market='ES')
+        # client_credentials_manager = SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
+        #return client_credentials_manager.get_access_token()
+
+    def get_playlist_tracks(self, sp, playlist_id):
+        results = sp.playlist_tracks(playlist_id)
+        tracks = []
+        while results['next']:
+            tracks.extend(results['items'])
+            results = sp.next(results)
+        tracks.extend(results['items'])
+        return tracks
+
+    def load_tracks_and_artists(self, tracks_data):
+        for track_item in tracks_data:
+            track_info = track_item['track']
+            if not track_info:
+                continue  # skip local or missing tracks
+            artist_info = track_info['artists'][0]  # Assuming the first artist primarily
+            
+            for artist_info in track_info['artists']:
+                artist, created = Artist.objects.get_or_create(
+                    name=artist_info['name'],
+                    spotify_url=f"https://open.spotify.com/artist/{artist_info['id']}"
+                )
+                main_artists.append(artist)
+
+            
+            artist, _ = Artist.objects.update_or_create(
+                spotify_url=f"https://open.spotify.com/artist/{artist_info['id']}",
+                defaults={
+                    'name': artist_details['name'],
+                    'bio': artist_details.get('biography', ''),
+                    'spotify_url': artist_details['external_urls'].get('spotify'),
+                    'instagram_url': artist_details['external_urls'].get('instagram', ''),
+                    'youtube_url': artist_details['external_urls'].get('youtube', ''),
+                    'twitter_url': artist_details['external_urls'].get('twitter', ''),
+                    'facebook_url': artist_details['external_urls'].get('facebook', ''),
+                    # Add more fields here as needed
+                }
+            )
+
+            # Adding genre and tag information
+            if created and artist_details.get('genres'):
+                for genre_name in artist_details['genres']:
+                    artist.tags.add(genre_name)  # Assuming 'tags' can accept genre names directly
+
+            track, _ = Track.objects.get_or_create(
+                name=track_info['name'],
+                artist=artist,
+                duration=int(track_info['duration_ms'] / 1000),
+                released=track_info['album']['release_date'],
+                #spotify_url=f"https://open.spotify.com/track/{track_info['id']}",
+                isrc=track_info['external_ids'].get('isrc', '')
+            )
+
+            # Add additional main artists
+            if len(main_artists) > 1:
+                track.additional_main_artists.set(main_artists[1:])  # Exclude the primary artist already set
+
+
+            print(f"Loaded: {track.name} by {artist.name}")

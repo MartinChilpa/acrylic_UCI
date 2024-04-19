@@ -279,6 +279,9 @@ SIMPLE_JWT = {
 # Dropbox Sign
 DROPBOX_SIGN_API_KEY = config('DROPBOX_SIGN_API_KEY', default='')
 
+# Spotify API
+SPOTIFY_CLIENT_ID = config('SPOTIFY_CLIENT_ID', default='')
+SPOTIFY_CLIENT_SECRET = config('SPOTIFY_CLIENT_SECRET', default='')
 
 # Social auth: Facebook configuration
 SOCIAL_AUTH_FACEBOOK_KEY = os.environ.get('SOCIAL_AUTH_FACEBOOK_KEY', '')

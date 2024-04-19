@@ -10,7 +10,6 @@ class TagSerializer(serializers.ModelSerializer):
         fields = ['name', 'slug']
 
 
-
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
@@ -19,8 +18,8 @@ class GenreSerializer(serializers.ModelSerializer):
 
 class MyTrackSerializer(serializers.ModelSerializer):
     artist = serializers.SlugRelatedField(slug_field='uuid', read_only=True)
-    tags = TagSerializer(many=True)
-    genres = GenreSerializer(many=True)
+    tags = TagSerializer(many=True, required=False)
+    genres = GenreSerializer(many=True, required=False)
     additional_main_artists = serializers.SlugRelatedField(slug_field='uuid', read_only=True, many=True)
     featured_artists = serializers.SlugRelatedField(slug_field='uuid', read_only=True, many=True)
 

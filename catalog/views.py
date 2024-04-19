@@ -6,7 +6,7 @@ from rest_framework.decorators import action
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample, inline_serializer
 from taggit.models import Tag
 from common.api.pagination import StandardPagination
-from artist.permissions import IsArtistOwner
+from artist.permissions import IsArtistOwner, IsTrackArtistOwner
 from legal.sign import send_signature_request_for_ownership_validation
 from catalog.models import Track, Genre, SyncList, SyncListTrack
 from catalog.serializers import TrackSerializer, MyTrackSerializer, GenreSerializer, SyncListSerializer, SyncListTrackSerializer

@@ -1,14 +1,15 @@
 from django.conf import settings
 from django.db.models import Count
+from django.http import Http404
 from django_filters import rest_framework as rest_filters
-from rest_framework import filters, viewsets, mixins, permissions
+from rest_framework import filters, viewsets, mixins, permissions, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_registration.api.views.register import RegisterView
 from drf_spectacular.utils import extend_schema, OpenApiParameter, inline_serializer
 from taggit.models import Tag
-
+from artist.permissions import IsArtistOwner
 from common.api.pagination import StandardPagination
 from catalog.serializers import TrackSerializer
 from artist.serializers import ArtistSerializer, RegisterArtistSerializer
@@ -63,6 +64,27 @@ class ArtistViewSet(viewsets.ReadOnlyModelViewSet):
             serializer = TrackSerializer(page, many=True, context={'request': request})
             return self.get_paginated_response(serializer.data)
         serializer = TrackSerializer(tracks, many=True, context={'request': request})
+        return Response(serializer.data)
+
+
+class MyArtistViewSet(viewsets.GenericViewSet):
+    serializer_class = ArtistSerializer
+    queryset = Artist.objects.none()
+    permission_classes = [permissions.IsAuthenticated, IsArtistOwner]
+
+    def get_object(self):
+        instance = getattr(request.user, 'artist', None)
+        if not instance:
+            raise Http404('No Artist profile instance found.')
+        return instance
+
+    @action(detail=False, methods=['get'])
+    def profile(self, request):
+        """
+        Retrieve the singleton instance.
+        """
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
 

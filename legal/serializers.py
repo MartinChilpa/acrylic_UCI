@@ -6,3 +6,9 @@ class MasterSplitSerializer(serializers.ModelSerializer):
     class Meta:
         model = MasterSplit
         fields = ['uuid', 'owner_name', 'owner_email', 'percent', 'validated']
+
+
+class MyMasterSplitSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MasterSplit
+        fields = ['uuid', 'owner_name', 'owner_email', 'percent']

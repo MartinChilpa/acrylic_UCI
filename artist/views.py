@@ -73,7 +73,7 @@ class MyArtistViewSet(viewsets.GenericViewSet):
     permission_classes = [permissions.IsAuthenticated, IsArtistOwner]
 
     def get_object(self):
-        instance = getattr(request.user, 'artist', None)
+        instance = getattr(self.request.user, 'artist', None)
         if not instance:
             raise Http404('No Artist profile instance found.')
         return instance

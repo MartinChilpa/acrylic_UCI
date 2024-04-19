@@ -190,7 +190,7 @@ class MySyncListViewSet(viewsets.ModelViewSet):
             track = get_object_or_404(Track, uuid=track_uuid)
             
             # Validate if the track belongs to the artist, if required
-            # if track.artist != request.user.artist:
+            # if track.artist != self.request.user.artist:
             #     continue
             SyncListTrack.objects.update_or_create(
                 synclist=synclist,

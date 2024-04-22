@@ -179,7 +179,7 @@ EMAIL_PORT = 25
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
 EMAIL_USE_TLS = True
-EMAIL_FROM = os.environ.get('EMAIL_FROM', '')
+EMAIL_FROM = os.environ.get('EMAIL_FROM', 'noreply@acrylic.la')
 DEFAULT_FROM_EMAIL = EMAIL_FROM
 AWS_SES_REGION_NAME = os.environ.get('AWS_SES_REGION_NAME', '')
 AWS_SES_REGION_ENDPOINT = os.environ.get('AWS_SES_REGION_ENDPOINT', '')
@@ -255,11 +255,11 @@ REST_REGISTRATION = {
     'REGISTER_SERIALIZER_CLASS': 'artist.serializers.RegisterArtistSerializer',
     'REGISTER_OUTPUT_SERIALIZER_CLASS': 'account.serializers.UserProfileSerializer',
 
-
+    'RESET_PASSWORD_VERIFICATION_ENABLED': True,
     'REGISTER_VERIFICATION_URL': f'{FRONTEND_BASE_URL}verify-user/',
     'RESET_PASSWORD_VERIFICATION_URL': f'{FRONTEND_BASE_URL}reset-password/',
     'REGISTER_EMAIL_VERIFICATION_URL': f'{FRONTEND_BASE_URL}verify-email/',
-    'VERIFICATION_FROM_EMAIL': 'no-reply@acrylic.la',
+    'VERIFICATION_FROM_EMAIL': 'noreply@acrylic.la',
 }
 
 # JWT auth settings

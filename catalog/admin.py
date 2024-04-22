@@ -1,6 +1,13 @@
 from django.contrib import admin
 from django.db.models import Count
-from catalog.models import Genre, Track, SyncList, SyncListTrack
+from catalog.models import Distributor, Genre, Track, SyncList, SyncListTrack
+
+
+@admin.register(Distributor)
+class DistributorAdmin(admin.ModelAdmin):
+    list_display = ['name', 'contact_name', 'email', 'created', 'updated']
+    search_fields = ['name']
+    list_filter = ['created', 'updated']
 
 
 @admin.register(Genre)

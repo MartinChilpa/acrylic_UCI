@@ -9,6 +9,18 @@ from common.models import BaseModel
 from catalog.validators import validate_isrc
 
 
+class Distributor(BaseModel):
+    name = models.CharField(max_length=100)
+    contact_name = models.CharField(max_length=120, blank=True)
+    email = models.EmailField(blank=True)
+    # whitelist
+    whitelist_email = models.EmailField(blank=True)
+    whitelist_send = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.name 
+
+
 class Genre(BaseModel):
     name = models.CharField(max_length=80)
     code = models.SlugField(max_length=80, unique=True)
@@ -48,6 +60,9 @@ class Track(BaseModel):
     artist = models.ForeignKey('artist.Artist', related_name='tracks', on_delete=models.PROTECT)
     name = models.CharField(max_length=250)
     duration = models.PositiveIntegerField(null=True) # in seconds / ms
+
+    distributor = models.ForeignKey(Distributor, related_name='tracks', on_delete=models.SET_NULL, blank=True, null=True)
+
     # total_uses
     #price
     released = models.DateField(blank=True, null=True)

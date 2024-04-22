@@ -26,8 +26,6 @@ class Command(BaseCommand):
         spotify = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=client_id, client_secret=client_secret))
         return spotify
         results = spotify.search(q=f'isrc:{self.isrc}', type='track', market='ES')
-        # client_credentials_manager = SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
-        #return client_credentials_manager.get_access_token()
 
     def get_playlist_tracks(self, sp, playlist_id):
         results = sp.playlist_tracks(playlist_id)
@@ -44,33 +42,27 @@ class Command(BaseCommand):
             if not track_info:
                 continue  # skip local or missing tracks
             artist_info = track_info['artists'][0]  # Assuming the first artist primarily
+            main_artists = []
             
             for artist_info in track_info['artists']:
-                artist, created = Artist.objects.get_or_create(
-                    name=artist_info['name'],
-                    spotify_url=f"https://open.spotify.com/artist/{artist_info['id']}"
+                artist, _ = Artist.objects.update_or_create(
+                    spotify_url=f"https://open.spotify.com/artist/{artist_info['id']}",
+                    defaults={
+                        'name': artist_info['name'],
+                        'bio': artist_info.get('biography', ''),
+                        'spotify_url': artist_info['external_urls'].get('spotify'),
+                        'instagram_url': artist_info['external_urls'].get('instagram', ''),
+                        'youtube_url': artist_info['external_urls'].get('youtube', ''),
+                        'twitter_url': artist_info['external_urls'].get('twitter', ''),
+                        'facebook_url': artist_info['external_urls'].get('facebook', ''),
+                        # Add more fields here as needed
+                    }
                 )
                 main_artists.append(artist)
 
-            
-            artist, _ = Artist.objects.update_or_create(
-                spotify_url=f"https://open.spotify.com/artist/{artist_info['id']}",
-                defaults={
-                    'name': artist_details['name'],
-                    'bio': artist_details.get('biography', ''),
-                    'spotify_url': artist_details['external_urls'].get('spotify'),
-                    'instagram_url': artist_details['external_urls'].get('instagram', ''),
-                    'youtube_url': artist_details['external_urls'].get('youtube', ''),
-                    'twitter_url': artist_details['external_urls'].get('twitter', ''),
-                    'facebook_url': artist_details['external_urls'].get('facebook', ''),
-                    # Add more fields here as needed
-                }
-            )
-
-            # Adding genre and tag information
-            if created and artist_details.get('genres'):
-                for genre_name in artist_details['genres']:
-                    artist.tags.add(genre_name)  # Assuming 'tags' can accept genre names directly
+                # Adding genre and tag information
+                #for genre_name in track_info['genres']:
+                #    artist.tags.add(genre_name)  # Assuming 'tags' can accept genre names directly
 
             track, _ = Track.objects.get_or_create(
                 name=track_info['name'],

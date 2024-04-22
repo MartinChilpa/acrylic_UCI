@@ -146,6 +146,14 @@ USE_I18N = True
 USE_TZ = True
 
 
+# Override datetime formatting
+from django.conf.locale.en import formats as en_formats
+en_formats.DATETIME_FORMAT = 'Y/m/d H:i'
+en_formats.SHORT_DATETIME_FORMAT = 'Y/m/d H:i'
+en_formats.DATE_FORMAT = 'Y/m/d'
+en_formats.SHORT_DATE_FORMAT = 'Y/m/d'
+
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 

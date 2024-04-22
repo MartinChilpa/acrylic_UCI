@@ -1,5 +1,7 @@
 from django.contrib import admin
 from django.db.models import Count
+from django.urls import reverse
+from django.utils.html import format_html
 from catalog.models import Distributor, Genre, Track, SyncList, SyncListTrack
 
 
@@ -19,13 +21,18 @@ class GenreAdmin(admin.ModelAdmin):
 
 @admin.register(Track)
 class TrackAdmin(admin.ModelAdmin):
-    list_display = ['isrc', 'name', 'artist', 'duration', 'released', 'is_cover', 
+    queryset = Track.objects.select_related('artist')
+    list_display = ['isrc', 'name', 'artist_link', 'distributor', 'duration', 'released', 'is_cover', 
                     'is_remix', 'is_instrumental', 'is_explicit', 'created', 'updated']
-    list_filter = ['released', 'is_remix', 'is_cover', 'is_instrumental', 'created', 'updated']
+    list_filter = ['released', 'distributor', 'is_remix', 'is_cover', 'is_instrumental', 'created', 'updated']
     search_fields = ['name', 'duration', 'artist__name']
     raw_id_fields = ['artist']
     filter_horizontal = ['genres', 'additional_main_artists', 'featured_artists']
 
+    @admin.display(ordering='artist', description='Artist')
+    def artist_link(self, obj):
+        link = reverse('admin:artist_artist_change', args=[obj.artist_id])
+        return format_html('<a href="{}">{}</a>', link, obj.artist.name)
 
 
 class SyncListTrackInline(admin.TabularInline):

@@ -60,7 +60,7 @@ class RegisterArtistSerializer(DefaultRegisterUserSerializer):
         profile_data = validated_data.pop('profile')
         user = super().create(validated_data)
         # create related artist profile
-        Arist.objects.create(user=user)
+        Artist.objects.create(user=user)
         # update profile
         profile = user.artist
         for attr, value in profile_data.items():

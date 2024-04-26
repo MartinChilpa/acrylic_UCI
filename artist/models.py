@@ -4,8 +4,13 @@ from django.db import models
 from django_countries.fields import CountryField
 from taggit.managers import TaggableManager
 
+from common.storage import public_storage
 from common.models import BaseModel, ActiveManager
 from catalog.validators import validate_isrc
+
+
+def get_aritst_upload_path(instance, filename):
+    return f'syncs/{instance.uuid}/{filename}'
 
 
 class Artist(BaseModel):
@@ -16,6 +21,10 @@ class Artist(BaseModel):
     hometown = models.CharField(max_length=250)
     country = CountryField(default='ES', blank_label='(seleccionar)')
     
+    # images
+    image = models.ImageField(upload_to=get_aritst_upload_path, storage=public_storage, blank=True)
+    background_image = models.ImageField(upload_to=get_aritst_upload_path, storage=public_storage, blank=True)
+
     tags = TaggableManager(blank=True)
 
     # external IDs

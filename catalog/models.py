@@ -4,14 +4,11 @@ from django.utils.text import slugify
 
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
-from storages.backends.s3 import S3Storage
 from taggit.managers import TaggableManager
 
 from common.models import BaseModel
+from common.storage import public_storage
 from catalog.validators import validate_isrc
-
-
-public_storage = S3Storage(bucket_name=settings.PUBLIC_S3_BUCKET)
 
 
 class Distributor(BaseModel):
@@ -119,7 +116,7 @@ class Track(BaseModel):
 
 
 def get_sync_upload_path(instance, filename):
-    return f'tracks/{instance.uuid}/{filename}'
+    return f'syncs/{instance.uuid}/{filename}'
 
 
 class SyncList(BaseModel):

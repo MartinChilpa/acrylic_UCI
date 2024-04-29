@@ -10,37 +10,32 @@ from catalog.models import Track
 class Command(BaseCommand):
     help = 'Loads Chartmetrics IDs for Tracks and Artists based on ISRCs'
     def handle(self, *args, **options):
-        visited_artist_ids = []
-
         cm = Chartmetric()
         cm.authenticate()
-        
-        for track in Track.objects.exclude(chartmetric_id='').order_by('?'):
-            if track.artist.chartmetric_id not in visited_artist_ids:
-                artist = track.artist
 
-                # do same with stats
-                stats = cm.get_artist_stats(artist.chartmetric_id)
+        for artist in Artist.objects.exclude(chartmetric_id='').filter(spotify_followers=0).order_by('?'):
+            # do same with stats
+            stats = cm.get_artist_stats(artist.chartmetric_id)
 
-                # spotify URL
-                if stats['spotify']['link']:
-                    artist.spotify_url = stats['spotify']['link']
-                # spotify followers
-                if stats['spotify']['followers']:
-                    artist.spotify_followers = stats['spotify']['followers'][0]['value']
+            # spotify URL
+            if stats['spotify']['link']:
+                artist.spotify_url = stats['spotify']['link']
+            # spotify followers
+            if stats['spotify']['followers']:
+                artist.spotify_followers = stats['spotify']['followers'][0]['value']
 
-                if stats['spotify']['popularity']:
-                    artist.spotify_popularity = stats['spotify']['popularity'][0]['value']
+            if stats['spotify']['popularity']:
+                artist.spotify_popularity = stats['spotify']['popularity'][0]['value']
 
-                if stats['spotify']['listeners']:
-                    artist.spotify_monthly_listeners = stats['spotify']['listeners'][0]['value']
+            if stats['spotify']['listeners']:
+                artist.spotify_monthly_listeners = stats['spotify']['listeners'][0]['value']
 
-                # instagram URL
-                if stats['instagram']['link']:
-                    artist.instagram_url = stats['instagram']['link']
-                # instagram followers
-                if stats['instagram']['followers']:
-                    artist.instagram_followers = stats['instagram']['followers'][0]['value']
-                
-                artist.save()
-                visited_artist_ids.append(track.artist.chartmetric_id)
+            # instagram URL
+            if stats['instagram']['link']:
+                artist.instagram_url = stats['instagram']['link']
+            # instagram followers
+            if stats['instagram']['followers']:
+                artist.instagram_followers = stats['instagram']['followers'][0]['value']
+            
+            artist.save()
+

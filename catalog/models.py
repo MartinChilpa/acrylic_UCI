@@ -81,6 +81,9 @@ class Track(BaseModel):
     language = models.CharField(max_length=2, choices=Language.choices, blank=True)
     lyrics = models.TextField(blank=True)
 
+    # images
+    cover_image = models.ImageField(upload_to=get_upload_path, storage=public_storage, blank=True)
+
     # aduio
     snippet  = models.FileField(upload_to=get_upload_path, blank=True)
     file_wav = models.FileField(upload_to=get_upload_path, blank=True)

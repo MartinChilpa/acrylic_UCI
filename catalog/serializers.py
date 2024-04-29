@@ -36,6 +36,7 @@ class MyTrackSerializer(serializers.ModelSerializer):
             'file_mp3': {'required': False},
             'file_wav': {'required': False},
             'snippet': {'required': False},
+            'cover_image': {'required': False},
         }
 
 

@@ -28,7 +28,8 @@ class Artist(BaseModel):
     tags = TaggableManager(blank=True)
 
     # external IDs
-    chartmetric_id = models.CharField(max_length=100, blank=True)
+    spotify_id = models.CharField(max_length=30, blank=True)
+    chartmetric_id = models.CharField(max_length=30, blank=True)
 
     # social
     spotify_url = models.URLField(null=True, blank=True)

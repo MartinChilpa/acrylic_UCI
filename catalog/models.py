@@ -101,21 +101,42 @@ class Track(BaseModel):
     #season
     #similar_artists
 
-    #spotify_id (can be multiple....)
-    
+    # external ids
+    spotify_id = models.CharField(max_length=30, blank=True)
+    chartmetric_id = models.CharField(max_length=30, blank=True)
+
     class Meta:
         ordering = ['-id']
         indexes = [
             models.Index(fields=['isrc']),
+            models.Index(fields=['spotify_id']),
+            models.Index(fields=['chartmetric_id']),
         ]
     
     def __str__(self):
         return self.name
     
-    def search_spotify_id(self):
+    #def search_spotify_id(self):
+    #    spotify = spotipy.Spotify(auth_manager=SpotifyClientCredentials())
+    #    results = spotify.search(q=f'isrc:{self.isrc}', type='track', market='ES')
+    #    return [t for t in results['tracks']['items'] if t['external_ids']['isrc'] == self.isrc]
+
+    def _update_spotify_id(self):
         spotify = spotipy.Spotify(auth_manager=SpotifyClientCredentials())
-        results = spotify.search(q=f'isrc:{self.isrc}', type='track', market='ES')
-        return [t for t in results['tracks']['items'] if t['external_ids']['isrc'] == self.isrc]
+        results = spotify.search(q=f'isrc:{self.isrc}', type='track')
+        tracks = [t for t in results['tracks']['items'] if t['external_ids']['isrc'] == self.isrc]
+        if len(tracks) > 0:
+            # first track where ISRC matches
+            self.spotify_id = tracks[0]['id']
+            print(f'Track Spotify ID: {self.spotify_id}')
+            if not self.artist.spotify_id:
+                artist = self.artist        
+                artist.spotify_id = tracks[0]['artists'][0]['id']
+                artist.save()
+                print(f'Artist Spotify ID: {artist.spotify_id}')
+        else:
+            print(f'{self.name}, {self.artist.name} - ISRC {self.isrc} No track ID found')
+        self.save()
 
 
 def get_sync_upload_path(instance, filename):

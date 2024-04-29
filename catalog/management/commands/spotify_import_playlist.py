@@ -1,3 +1,5 @@
+from datetime import datetime
+import dateutil
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 from django.core.management.base import BaseCommand
@@ -9,7 +11,13 @@ from catalog.models import Track
 class Command(BaseCommand):
     help = 'Imports tracks and artists from a specified Spotify playlist'
     # https://open.spotify.com/playlist/2fuHQ3Dfe0xSbr5sibd1lV
-
+    
+    #from catalog.models import *
+    #import time
+    #for t in Track.objects.filter(spotify_id='').order_by('?'):
+    #    t._update_spotify_id()
+    #    time.sleep(3)
+        
     def add_arguments(self, parser):
         parser.add_argument('playlist_id', type=str, help='Spotify Playlist ID')
 
@@ -48,6 +56,7 @@ class Command(BaseCommand):
                 artist, _ = Artist.objects.update_or_create(
                     spotify_url=f"https://open.spotify.com/artist/{artist_info['id']}",
                     defaults={
+                        'spotify_id': artist_info['id'],
                         'name': artist_info['name'],
                         'bio': artist_info.get('biography', ''),
                         'spotify_url': artist_info['external_urls'].get('spotify'),
@@ -63,12 +72,17 @@ class Command(BaseCommand):
                 # Adding genre and tag information
                 #for genre_name in track_info['genres']:
                 #    artist.tags.add(genre_name)  # Assuming 'tags' can accept genre names directly
+            
+            # parse release date
+            default_date = datetime(datetime.now().year, 1, 1)
+            release_date = dateutil.parser.parse(track_info['album']['release_date'], default=default_date)
 
             track, _ = Track.objects.get_or_create(
+                spotify_id=track_info['id'],
                 name=track_info['name'],
                 artist=artist,
                 duration=int(track_info['duration_ms'] / 1000),
-                released=track_info['album']['release_date'],
+                released=release_date,
                 #spotify_url=f"https://open.spotify.com/track/{track_info['id']}",
                 isrc=track_info['external_ids'].get('isrc', '')
             )
@@ -76,6 +90,5 @@ class Command(BaseCommand):
             # Add additional main artists
             if len(main_artists) > 1:
                 track.additional_main_artists.set(main_artists[1:])  # Exclude the primary artist already set
-
 
             print(f"Loaded: {track.name} by {artist.name}")

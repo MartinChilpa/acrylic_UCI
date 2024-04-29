@@ -302,6 +302,9 @@ SIMPLE_JWT = {
 # Dropbox Sign
 DROPBOX_SIGN_API_KEY = config('DROPBOX_SIGN_API_KEY', default='')
 
+# Chartmetric API
+CHARTMETRIC_REFRESH_TOKEN = config('CHARTMETRIC_REFRESH_TOKEN', default='')
+
 # Spotify API
 SPOTIFY_CLIENT_ID = config('SPOTIFY_CLIENT_ID', default='')
 SPOTIFY_CLIENT_SECRET = config('SPOTIFY_CLIENT_SECRET', default='')

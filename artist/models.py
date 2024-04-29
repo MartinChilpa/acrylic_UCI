@@ -71,6 +71,10 @@ class Artist(BaseModel):
         ordering = ['-name']
         indexes = [
             models.Index(fields=['name']),
+            models.Index(fields=['spotify_id']),
+            models.Index(fields=['chartmetric_id']),
+            models.Index(fields=['-spotify_followers']),
+            models.Index(fields=['-instagram_followers']),
         ]
     
     def __str__(self):

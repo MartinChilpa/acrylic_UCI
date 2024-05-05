@@ -24,9 +24,8 @@ router.register('articles', content_views.ArticleViewSet)
 # artist dashboard
 router.register('my-artist', artist_views.MyArtistViewSet)
 router.register('my-artist/tracks', catalog_views.MyTrackViewSet)
-#router.register(r'my-artist/tracks/(?P<track_id>\d+)/master-splits', legal_views.MasterSplitViewSet, basename='master-split')
 router.register('my-artist/synclists', catalog_views.MySyncListViewSet)
-
+router.register('my-artist/split-sheets/', legal_views.MySplitSheetViewSet)
 
 registration_urls = (
     [

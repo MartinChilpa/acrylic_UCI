@@ -6,7 +6,7 @@ from legal.models import SplitSheet, PublishingSplit, MasterSplit
 from legal.serializers import SplitSheetSerializer, PublishingSplitSerializer, MasterSplitSerializer
 
 
-class SplitSheetViewSet(viewsets.ModelViewSet):
+class MySplitSheetViewSet(viewsets.ModelViewSet):
     serializer_class = SplitSheetSerializer
     permission_classes = [permissions.IsAuthenticated, IsTrackArtistOwner]
     queryset = SplitSheet.objects.none()

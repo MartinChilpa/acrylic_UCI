@@ -30,7 +30,7 @@ class RegisterArtistSerializer(DefaultRegisterUserSerializer):
         # create related artist profile
         Artist.objects.create(user=user)
         # update profile
-        profile = self.request.user.artist
+        profile = user.artist
         for attr, value in profile_data.items():
             setattr(profile, attr, value)
         profile.save()

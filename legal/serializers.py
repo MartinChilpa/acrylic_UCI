@@ -16,6 +16,7 @@ class PublishingSplitSerializer(serializers.ModelSerializer):
 
 
 class SplitSheetSerializer(serializers.ModelSerializer):
+    track = serializers.SlugRelatedField(slug_field='uuid', read_only=True)
     publishing_splits = PublishingSplitSerializer(many=True, required=False)
     master_splits = MasterSplitSerializer(many=True, required=False)
 
@@ -48,10 +49,10 @@ class SplitSheetSerializer(serializers.ModelSerializer):
         for publishing_split_data in publishing_splits_data:
             publishing_split_uuid = publishing_split_data.get('uuid', None)
             if publishing_split_uuid:
-                publishing_split = PublishingSplit.objects.get(split_sheet=instance, uuid=publishing_split_uuid)
-                publishing_split.name = publishing_split_data.get('name', publishing_split.name)
-                # Update other fields as necessary
-                publishing_split.save()
+                publishing_split, _ = PublishingSplit.objects.update_or_create(
+                    split_sheet=instance, uuid=publishing_split_uuid,
+                    defaults=publishing_split_data
+                )
             else:
                 PublishingSplit.objects.create(split_sheet=instance, **publishing_split_data)
 
@@ -59,10 +60,10 @@ class SplitSheetSerializer(serializers.ModelSerializer):
         for master_split_data in master_splits_data:
             master_split_uuid = master_split_data.get('uuid', None)
             if master_split_uuid:
-                master_split = MasterSplit.objects.get(uuid=master_split_uuid)
-                master_split.name = master_split_data.get('name', master_split.name)
-                # Update other fields as necessary
-                master_split.save()
+                master_split, _ = MasterSplit.objects.update_or_create(
+                    split_sheet=instance, uuid=master_split_uuid,
+                    defaults=master_split_data
+                )
             else:
                 MasterSplit.objects.create(split_sheet=instance, **master_split_data)
 

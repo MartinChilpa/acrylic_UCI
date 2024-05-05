@@ -16,8 +16,8 @@ class PublishingSplitSerializer(serializers.ModelSerializer):
 
 
 class SplitSheetSerializer(serializers.ModelSerializer):
-    publishing_splits = PublishingSplitSerializer(many=True, required=True)
-    master_splits = MasterSplitSerializer(many=True, required=True)
+    publishing_splits = PublishingSplitSerializer(many=True, required=False)
+    master_splits = MasterSplitSerializer(many=True, required=False)
 
     class Meta:
         model = SplitSheet

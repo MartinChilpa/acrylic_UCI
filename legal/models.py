@@ -4,6 +4,7 @@ from legal.validators import validate_percent
 
 
 class SplitSheet(BaseModel):
+    artist = models.ForeignKey('artist.Artist', related_name='split_sheets', on_delete=models.CASCADE) 
     track = models.ForeignKey('catalog.Track', related_name='split_sheets', on_delete=models.CASCADE, blank=True, null=True)
     # alternative for when no track is selected
     track_name = models.CharField(max_length=150)

@@ -18,3 +18,6 @@ class MySplitSheetViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return self.request.user.artist.split_sheets.all()
+
+    def perform_create(self, serializer):
+        serializer.save(artist=self.request.user.artist)

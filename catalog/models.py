@@ -51,6 +51,23 @@ def get_upload_path(instance, filename):
     return f'tracks/{instance.uuid}/{filename}'
 
 
+class Price(BaseModel):
+    name = models.CharField(max_length=150)
+    description = models.TextField(blank=True)
+    amount = models.DecimalField(max_digits=8, decimal_places=2)
+    max_artist_tracks = models.PositiveIntegerField('Max tracks per artist', default=0, help_text='Use 0 for unlimited')
+    default = models.BooleanField(default=False)
+    active = models.BooleanField(default=False)
+
+    def get_available_slots(self, artist):
+        if self.max_artist_tracks > 0:
+            return self.max_artist_tracks - artist.tracks.filter(price=self).count()
+        return 'unlimited'
+
+    def __str__(self):
+        return self.name 
+
+
 class Track(BaseModel):
 
     class RecordType(models.TextChoices):
@@ -94,6 +111,10 @@ class Track(BaseModel):
     featured_artists = models.ManyToManyField('artist.Artist', blank=True, related_name='other_tracks_featured')
 
     tags = TaggableManager(blank=True)
+
+    # cost
+    price = models.ForeignKey(Price, related_name='tracks', blank=True, null=True, on_delete=models.SET_NULL)
+
     #moods
     #cultures
     #instruments
@@ -140,6 +161,9 @@ class Track(BaseModel):
 
     def get_latest_signed_splitsheet(self):
         return self.split_sheets.exclude(signed=None).order_by('-signed')
+    
+    def get_price(self):
+        return self.price or Price.objects.get(default=True)
 
 
 def get_sync_upload_path(instance, filename):

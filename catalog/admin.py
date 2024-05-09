@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.db.models import Count
 from django.urls import reverse
 from django.utils.html import format_html
-from catalog.models import Distributor, Genre, Track, SyncList, SyncListTrack
+from catalog.models import Distributor, Genre, Price, Track, SyncList, SyncListTrack
 
 
 @admin.register(Distributor)
@@ -17,6 +17,11 @@ class GenreAdmin(admin.ModelAdmin):
     list_display = ['code', 'name', 'created', 'updated']
     search_fields = ['code', 'name']
     list_filter = ['created', 'updated']
+
+
+@admin.register(Price)
+class PriceAdmin(admin.ModelAdmin):
+    list_display = ['name', 'amount', 'max_artist_tracks', 'default', 'active']
 
 
 @admin.register(Track)

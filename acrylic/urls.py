@@ -21,11 +21,15 @@ router.register('distributors', catalog_views.DistributorViewSet)
 router.register('synclists', catalog_views.SyncListViewSet)
 router.register('articles', content_views.ArticleViewSet)
 
-# artist dashboard
+# artist account
 router.register('my-artist', artist_views.MyArtistViewSet)
 router.register('my-artist/tracks', catalog_views.MyTrackViewSet)
 router.register('my-artist/synclists', catalog_views.MySyncListViewSet)
 router.register('my-artist/split-sheets', legal_views.MySplitSheetViewSet)
+
+# buyer account
+# tbd
+
 
 registration_urls = (
     [

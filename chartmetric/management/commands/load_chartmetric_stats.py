@@ -2,9 +2,7 @@ from catalog.models import *
 from django.core.management.base import BaseCommand
 from django.conf import settings
 from artist.models import Artist
-from catalog.models import Track
 from chartmetric.tasks import load_chartmetric_stats
-
 
 
 class Command(BaseCommand):

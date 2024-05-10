@@ -204,7 +204,7 @@ class SyncList(BaseModel):
             content_type__model='track', # Model name must be lowercase
             object_id__in=track_ids
         ).values_list('id', flat=True)  # Retrieve only tag IDs to avoid unnecessary data
-        return Tag.objects.filter(tagged_items__in=tagged_item_ids)
+        return Tag.objects.filter(taggit_taggeditem_items__in=tagged_item_ids)
 
     def __str__(self):
         return self.name 

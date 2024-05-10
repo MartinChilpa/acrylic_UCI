@@ -8,7 +8,7 @@ from decouple import config
 app = Celery('acrylic')
 #app.config_from_object('django.conf:settings', namespace='CELERY')
 
-app.config.update(
+app.conf.update(
     BROKER_URL=config('REDIS_URL', ''),
     CELERY_RESULT_BACKEND=config('REDIS_URL', '')
 )

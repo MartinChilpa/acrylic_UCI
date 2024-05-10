@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'django_ses',
     'corsheaders',
+    'import_export',
     # project apps
     'common',
     'account',

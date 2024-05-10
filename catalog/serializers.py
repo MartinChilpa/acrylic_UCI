@@ -83,11 +83,24 @@ class SyncListSerializer(serializers.ModelSerializer):
     tracks = SyncListTrackSerializer(source='synclisttrack_set', many=True, read_only=True)
     artist = serializers.SlugRelatedField(slug_field='uuid', read_only=True)
 
+    genres = serializers.SerializerMethodField()
+    tags = serializers.SerializerMethodField()
+
     class Meta:
         model = SyncList
-        fields = ['uuid', 'artist', 'name', 'cover_image', 'background_image', 'description', 'order', 'pinned', 'tracks']
+        fields = ['uuid', 'artist', 'name', 'cover_image', 'background_image', 'description', 'order', 'pinned', 'tracks', 'genres', 'tags']
 
     def create(self, validated_data):
         # Ensure the SyncList is associated with the current artist.
         validated_data['artist'] = self.context['request'].user.artist
         return super().create(validated_data)
+
+    def get_genres(self, obj):
+        # Assuming `get_tags()` returns a queryset of Tag instances
+        tags = obj.get_genres()
+        return GenreSerializer(tags, many=True, context=self.context).data
+    
+    def get_tags(self, obj):
+        # Assuming `get_tags()` returns a queryset of Tag instances
+        tags = obj.get_tags()
+        return TagSerializer(tags, many=True, context=self.context).data

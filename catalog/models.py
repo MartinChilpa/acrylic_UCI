@@ -1,10 +1,12 @@
 from django.conf import settings
 from django.db import models
+from django.db.models import Count
 from django.utils.text import slugify
 
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 from taggit.managers import TaggableManager
+from taggit.models import Tag, TaggedItem
 
 from common.models import BaseModel
 from common.storage import public_storage
@@ -190,9 +192,21 @@ class SyncList(BaseModel):
     pinned = models.BooleanField(default=True, help_text='Pinned in artist profile.')
     tracks = models.ManyToManyField('catalog.Track', through='catalog.SyncListTrack', related_name='synclists', blank=True)
 
+    def get_genres(self):
+        # return genres
+        track_ids = self.tracks.values_list('id', flat=True)
+        return Genre.objects.filter(tracks__in=track_ids).annotate(
+            num_times=Count('taggit_taggeditem_items')
+        ).order_by('-num_times')
+    
     def get_tags(self):
-        self.tracks
-        #
+        track_ids = self.tracks.values_list('id', flat=True)
+        tagged_item_ids = TaggedItem.objects.filter(
+            content_type__app_label='catalog',  # Use the correct app label
+            content_type__model='track', # Model name must be lowercase
+            object_id__in=track_ids
+        ).values_list('id', flat=True)  # Retrieve only tag IDs to avoid unnecessary data
+        return Tag.objects.filter(tagged_items__in=tagged_item_ids)
 
     def __str__(self):
         return self.name 

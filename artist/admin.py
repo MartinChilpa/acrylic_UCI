@@ -1,6 +1,13 @@
 from django.contrib import admin
 from django.utils.html import format_html
+from import_export import resources
+from import_export.admin import ImportExportModelAdmin
 from artist.models import Artist
+
+
+class ArtistResource(resources.ModelResource):
+    class Meta:
+        model = Artist
 
 
 @admin.register(Artist)
@@ -9,6 +16,7 @@ class ArtistAdmin(admin.ModelAdmin):
     search_fields = ['uuid', 'name', 'bio', 'spotify_url', 'spotify_id', 'chartmetric_id']
     list_filter= ['is_active', 'created', 'updated']
     raw_id_fields = ['user']
+    resource_classes = [ArtistResource]
 
     @admin.display(description='Links')
     def artist_links(self, obj):

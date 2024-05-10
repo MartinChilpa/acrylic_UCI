@@ -1,13 +1,15 @@
 import celery
-from artist.models import Artist
-from catalog.models import Track
+from django.apps import apps
 from chartmetric.engine import Chartmetric
 
 
 app = celery.Celery('example')
 
+
 @app.task
 def load_chartmetric_ids(track_id):
+    Track = apps.get_model('catalog', 'track')
+
     # auth in chartmetric
     cm = Chartmetric()
     cm.authenticate()
@@ -31,7 +33,9 @@ def load_chartmetric_ids(track_id):
 
 @app.task
 def load_chartmetric_stats(artist_id): 
-     # auth in chartmetric
+    Track = apps.get_model('catalog', 'track')
+
+    # auth in chartmetric
     cm = Chartmetric()
     cm.authenticate()
 

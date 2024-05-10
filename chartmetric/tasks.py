@@ -35,7 +35,7 @@ def load_chartmetric_stats(artist_id):
     cm = Chartmetric()
     cm.authenticate()
 
-     try:
+    try:
         track = Track.objects.get(id=track_id)
     except Track.DoesNotExist:
         pass

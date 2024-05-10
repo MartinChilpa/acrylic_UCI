@@ -35,6 +35,7 @@ class MyTrackSerializer(serializers.ModelSerializer):
     genres = GenreSerializer(many=True, required=False)
     additional_main_artists = serializers.SlugRelatedField(slug_field='uuid', read_only=True, many=True)
     featured_artists = serializers.SlugRelatedField(slug_field='uuid', read_only=True, many=True)
+    price = PriceSerializer(many=False, required=False)
 
     class Meta:
         model = Track

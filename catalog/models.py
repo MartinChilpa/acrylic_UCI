@@ -190,6 +190,10 @@ class SyncList(BaseModel):
     pinned = models.BooleanField(default=True, help_text='Pinned in artist profile.')
     tracks = models.ManyToManyField('catalog.Track', through='catalog.SyncListTrack', related_name='synclists', blank=True)
 
+    def get_tags(self):
+        self.tracks
+        #
+
     def __str__(self):
         return self.name 
 

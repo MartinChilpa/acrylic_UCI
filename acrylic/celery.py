@@ -9,8 +9,8 @@ app = Celery('acrylic')
 #app.config_from_object('django.conf:settings', namespace='CELERY')
 
 app.conf.update(
-    BROKER_URL=config('REDIS_URL', ''),
-    CELERY_RESULT_BACKEND=config('REDIS_URL', '')
+    BROKER_URL=config('REDISCLOUD_URL', ''),
+    CELERY_RESULT_BACKEND=config('REDISCLOUD_URL', '')
 )
 
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)

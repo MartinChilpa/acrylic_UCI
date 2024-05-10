@@ -235,7 +235,21 @@ AWS_QUERYSTRING_EXPIRE = 3600 * 24 # 1 day
 
 # django-tagging
 FORCE_LOWERCASE_TAGS = True
+"""
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': os.environ.get('REDISCLOUD_URL', ''),
+        'TIMEOUT': 600, # 10 min
+        'KEY_PREFIX': 'cache',
+        'OPTIONS': {
+            'db': '0', # Redis DB nr. 0
+        }
+    }
+}
+"""
 
 REST_FRAMEWORK = {
     # YOUR SETTINGS

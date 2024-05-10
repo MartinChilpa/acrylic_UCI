@@ -1,10 +1,7 @@
 import celery
 from django.apps import apps
 from chartmetric.engine import Chartmetric
-
-
-app = celery.Celery('example')
-
+from acrylic.celery import app
 
 @app.task
 def load_chartmetric_ids(track_id):

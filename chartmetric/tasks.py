@@ -6,7 +6,6 @@ from chartmetric.engine import Chartmetric
 
 app = celery.Celery('example')
 
-
 @app.task
 def load_chartmetric_ids(track_id):
     # auth in chartmetric
@@ -14,7 +13,7 @@ def load_chartmetric_ids(track_id):
     cm.authenticate()
 
     try:
-        track = Track.objects.get(chartmetric_id=''):
+        track = Track.objects.get(id=track_id)
     except Track.DoesNotExist:
         pass
     else:
@@ -37,7 +36,7 @@ def load_chartmetric_stats(artist_id):
     cm.authenticate()
 
      try:
-        track = Track.objects.get(chartmetric_id=''):
+        track = Track.objects.get(id=track_id)
     except Track.DoesNotExist:
         pass
     else:

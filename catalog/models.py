@@ -10,6 +10,7 @@ from taggit.models import Tag, TaggedItem
 
 from common.models import BaseModel
 from common.storage import public_storage
+from chartmetric.tasks import load_chartmetric_ids
 from catalog.validators import validate_isrc
 
 
@@ -143,9 +144,16 @@ class Track(BaseModel):
             models.Index(fields=['chartmetric_id']),
         ]
     
+    
     def __str__(self):
         return self.name
     
+
+    def save(self):
+        super(Track, self).save(*args, **kwargs)
+        # async task to load charmetric ids
+        load_chartmetric_ids.delay(self.id)
+
     #def search_spotify_id(self):
     #    spotify = spotipy.Spotify(auth_manager=SpotifyClientCredentials())
     #    results = spotify.search(q=f'isrc:{self.isrc}', type='track', market='ES')

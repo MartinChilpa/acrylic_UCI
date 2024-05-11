@@ -91,5 +91,5 @@ class MyArtistViewSet(viewsets.GenericViewSet):
         return Response(serializer.data)
 
 
-class ArtistRegisterView(RegisterView):
+class MyArtistRegisterView(RegisterView):
     serializer_class = RegisterArtistSerializer

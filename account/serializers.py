@@ -11,6 +11,8 @@ User = get_user_model()
 
 
 class UserProfileSerializer(DefaultUserProfileSerializer):
+    profile = fields.JSONField(write_only=True, default=dict, initial=dict)
+
     class Meta:
         model = User
 
@@ -24,11 +26,6 @@ class UserProfileSerializer(DefaultUserProfileSerializer):
             'Buyer': None,
         }
         return profile_mapping[profile_model]
-
-    def get_fields(self, *args, **kwargs):
-        obj_fields = super().get_fields()
-        obj_fields['profile'] = fields.JSONField(write_only=True, default=dict, initial=dict)
-        return obj_fields
 
     def to_representation(self, instance):
         representation = super(UserProfileSerializer, self).to_representation(instance)

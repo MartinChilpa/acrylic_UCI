@@ -76,7 +76,7 @@ urlpatterns = [
         #path('account/', include('rest_registration.api.urls')),
 
         # 
-        path('artists/register/', artist_views.ArtistRegisterView.as_view(), name='artist_register_view'),
+        path('my-artist/register/', artist_views.MyArtistRegisterView.as_view(), name='artist_register_view'),
     
         # Artist dashboard URLs
         

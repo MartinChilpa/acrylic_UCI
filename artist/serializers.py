@@ -16,13 +16,15 @@ class ArtistSerializer(serializers.ModelSerializer):
 
 
 class RegisterArtistSerializer(DefaultRegisterUserSerializer):
+    profile = fields.JSONField(write_only=True, default=dict, initial=dict)
+
     class Meta:
         model = User
 
-    def get_fields(self, *args, **kwargs):
-        obj_fields = super().get_fields()
-        obj_fields['profile'] = fields.JSONField(write_only=True, default=dict, initial=dict)
-        return obj_fields
+    #def get_fields(self, *args, **kwargs):
+    #    obj_fields = super().get_fields()
+    #    obj_fields['profile'] = fields.JSONField(write_only=True, default=dict, initial=dict)
+    #    return obj_fields
 
     def create(self, validated_data):
         profile_data = validated_data.pop('profile')

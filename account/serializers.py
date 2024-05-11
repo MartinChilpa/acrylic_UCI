@@ -22,6 +22,8 @@ class RegisterSerializer(DefaultRegisterUserSerializer):
     def create(self, validated_data):
         data = validated_data.copy()
         
+        user_type = data.pop('type')
+
         # set username as base64 email
         data['username'] = data['email']
         if self.has_password_confirm_field():
@@ -32,7 +34,7 @@ class RegisterSerializer(DefaultRegisterUserSerializer):
         # create related account
         Account.objects.create(user=user)
 
-        if data['type'] == 'artist':
+        if user_type == 'artist':
             # create related artist profile
             Artist.objects.create(user=user)
         

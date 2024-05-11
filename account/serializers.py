@@ -42,33 +42,3 @@ class UserProfileSerializer(DefaultUserProfileSerializer):
             setattr(profile, attr, value)
         profile.save()
         return user
-
-
-class RegisterArtistSerializer(DefaultRegisterUserSerializer):
-    class Meta(DefaultRegisterUserSerializer.Meta):
-        fields = ['email', 'password1', 'password2']
-        model = User
-
-    def validate(self, attrs):
-        attrs = super().validate(attrs)
-        # Set the username to the part before '@' in the email
-        email = attrs['email']
-        attrs['username'] = base64.b64encode(email.encode()).decode()
-        return attrs
-
-    def get_fields(self, *args, **kwargs):
-        obj_fields = super().get_fields()
-        obj_fields['profile'] = fields.JSONField(write_only=True, default=dict, initial=dict)
-        return obj_fields
-
-    def create(self, validated_data):
-        profile_data = validated_data.pop('profile')
-        user = super().create(validated_data)
-        # create related artist profile
-        Artist.objects.create(user=user)
-        # update profile
-        profile = user.artist
-        for attr, value in profile_data.items():
-            setattr(profile, attr, value)
-        profile.save()
-        return user

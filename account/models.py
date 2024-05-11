@@ -42,9 +42,15 @@ class Account(BaseModel):
     def __str__(self):
         return self.user.email
 
+
+def get_upload_path(instance, filename):
+    return f'documents/{instance.uuid}/{filename}'
+
+
 #class Document(BaseModel):
-#     name = 
-#     document = 
+#    name = 
+#    document = models.FileField(upload_to=get_upload_path)
+    
 
 
 

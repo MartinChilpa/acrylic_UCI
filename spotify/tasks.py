@@ -6,7 +6,7 @@ from spotify.engine import spotify_client
 
 @app.task 
 def load_spotify_id(track_id, force=False):
-        
+
     Track = apps.get_model('catalog', 'track')
 
     try:

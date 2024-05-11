@@ -48,6 +48,9 @@ class Artist(BaseModel):
     amazonmusic_url = models.URLField(null=True, blank=True)
     deezer_url = models.URLField(null=True, blank=True)
 
+    # ranking
+    kamrank = models.PositiveBigIntegerField('KAMRank', editable=False, null=True)
+
     # stats
     spotify_followers = models.PositiveIntegerField(default=0, editable=False)
     spotify_popularity = models.PositiveIntegerField(default=0, editable=False)

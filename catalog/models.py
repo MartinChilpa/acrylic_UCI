@@ -1,15 +1,14 @@
+from datetime import timedelta
 from django.conf import settings
 from django.db import models
 from django.db.models import Count
 from django.utils.text import slugify
-
-import spotipy
-from spotipy.oauth2 import SpotifyClientCredentials
 from taggit.managers import TaggableManager
 from taggit.models import Tag, TaggedItem
 
 from common.models import BaseModel
 from common.storage import public_storage
+from spotify.tasks import load_spotify_id
 from chartmetric.tasks import load_chartmetric_ids
 from catalog.validators import validate_isrc
 
@@ -91,7 +90,7 @@ class Track(BaseModel):
     isrc = models.CharField('ISRC', max_length=12, validators=[validate_isrc])
     artist = models.ForeignKey('artist.Artist', related_name='tracks', on_delete=models.PROTECT)
     name = models.CharField(max_length=250)
-    duration = models.PositiveIntegerField(null=True) # in seconds / ms
+    duration = models.PositiveIntegerField(null=True, help_text='Duration in milliseconds')
 
     distributor = models.ForeignKey(Distributor, related_name='tracks', on_delete=models.SET_NULL, blank=True, null=True)
 
@@ -136,6 +135,9 @@ class Track(BaseModel):
     spotify_id = models.CharField(max_length=30, blank=True)
     chartmetric_id = models.CharField(max_length=30, blank=True)
 
+    # metrics
+    spotify_popularity = models.PositiveIntegerField(default=0) # integer between 1 and 100
+
     class Meta:
         ordering = ['-id']
         indexes = [
@@ -143,42 +145,27 @@ class Track(BaseModel):
             models.Index(fields=['spotify_id']),
             models.Index(fields=['chartmetric_id']),
         ]
-    
-    
+
     def __str__(self):
         return self.name
     
-
     def save(self, *args, **kwargs):
+        # load external ids when object is created
+        load_ids = False if not self.id else True
         super(Track, self).save(*args, **kwargs)
-        # async task to load charmetric ids
-        load_chartmetric_ids.delay(self.id)
 
-    #def search_spotify_id(self):
-    #    spotify = spotipy.Spotify(auth_manager=SpotifyClientCredentials())
-    #    results = spotify.search(q=f'isrc:{self.isrc}', type='track', market='ES')
-    #    return [t for t in results['tracks']['items'] if t['external_ids']['isrc'] == self.isrc]
+        if load_ids:
+            # async load spotify ids
+            load_spotify_id.delay(self.id)
+            # async task to load charmetric ids
+            load_chartmetric_ids.delay(self.id)
 
-    def _update_spotify_id(self):
-        spotify = spotipy.Spotify(auth_manager=SpotifyClientCredentials())
-        results = spotify.search(q=f'isrc:{self.isrc}', type='track')
-        tracks = [t for t in results['tracks']['items'] if t['external_ids']['isrc'] == self.isrc]
-        if len(tracks) > 0:
-            # first track where ISRC matches
-            self.spotify_id = tracks[0]['id']
-            print(f'Track Spotify ID: {self.spotify_id}')
-            if not self.artist.spotify_id:
-                artist = self.artist        
-                artist.spotify_id = tracks[0]['artists'][0]['id']
-                artist.save()
-                print(f'Artist Spotify ID: {artist.spotify_id}')
-        else:
-            print(f'{self.name}, {self.artist.name} - ISRC {self.isrc} No track ID found')
-        self.save()
+    def get_duration(self):
+        return timedelta(milliseconds=self.duration)
 
     def get_latest_signed_splitsheet(self):
-        return self.split_sheets.exclude(signed=None).order_by('-signed')
-    
+        return self.split_sheets.exclude(signed=None).order_by('-signed').first()
+
     def get_price(self):
         return self.price or Price.objects.get(default=True)
 

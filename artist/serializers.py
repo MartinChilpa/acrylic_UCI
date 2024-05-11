@@ -18,7 +18,7 @@ class ArtistSerializer(serializers.ModelSerializer):
 class RegisterArtistSerializer(DefaultRegisterUserSerializer):
     profile = fields.JSONField(write_only=True, default=dict, initial=dict)
 
-    class Meta(DefaultRegisterUserSerializer.Meta):
+    class Meta:
         model = User
         fields = ['email', 'password1', 'password2']
 

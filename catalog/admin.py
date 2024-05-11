@@ -56,7 +56,7 @@ class TrackAdmin(ImportExportModelAdmin):
     raw_id_fields = ['artist']
     filter_horizontal = ['genres', 'additional_main_artists', 'featured_artists']
     resource_classes = [TrackResource]
-    actions = [reload_spotify_data, reload_chartmetric_ids]
+    actions = [reload_spotify_ids, reload_chartmetric_ids]
 
     @admin.display(ordering='artist', description='Artist')
     def artist_link(self, obj):

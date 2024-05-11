@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'legal',
     'catalog',
     'chartmetric',
+    'spotify',
 ]
 
 MIDDLEWARE = [

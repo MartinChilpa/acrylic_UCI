@@ -15,7 +15,7 @@ def load_spotify_id(track_id, force=False):
     except Track.DoesNotExist:
         pass
     else:
-        if force == True or track.spotify_id == None:
+        if force == True or track.spotify_id == '':
             spotify = spotipy.Spotify(auth_manager=SpotifyClientCredentials())
             results = spotify.search(q=f'isrc:{track.isrc}', type='track')
             tracks = [t for t in results['tracks']['items'] if t['external_ids']['isrc'] == track.isrc]

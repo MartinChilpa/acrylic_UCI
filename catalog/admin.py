@@ -4,6 +4,7 @@ from django.urls import reverse
 from django.utils.html import format_html
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
+from spotify.tasks import load_spotify_id
 from catalog.models import Distributor, Genre, Price, Track, SyncList, SyncListTrack
 
 
@@ -32,6 +33,12 @@ class PriceAdmin(admin.ModelAdmin):
     list_display = ['name', 'single_use_price', 'max_artist_tracks', 'default', 'active', 'order']
 
 
+def reload_spotify_data(modeladmin, request, queryset):
+    for track in queryset:
+        load_spotify_id.delay(track.id)
+reload_spotify_data.short_description = 'Reload data from Spotify'
+
+
 @admin.register(Track)
 class TrackAdmin(ImportExportModelAdmin):
     queryset = Track.objects.select_related('artist')
@@ -42,6 +49,7 @@ class TrackAdmin(ImportExportModelAdmin):
     raw_id_fields = ['artist']
     filter_horizontal = ['genres', 'additional_main_artists', 'featured_artists']
     resource_classes = [TrackResource]
+    actions = [reload_spotify_data]
 
     @admin.display(ordering='artist', description='Artist')
     def artist_link(self, obj):

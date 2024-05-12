@@ -25,6 +25,7 @@ router.register('articles', content_views.ArticleViewSet)
 
 # global account
 router.register('account', account_views.AccountViewSet)
+router.register('account/documents', account_views.DocumentViewSet)
 
 # artist account
 router.register('my-artist', artist_views.MyArtistViewSet)

@@ -64,10 +64,3 @@ class DocumentViewSet(viewsets.ModelViewSet):
             return qs.get(uuid=uuid)
         except Document.DoesNotExist:
             raise Document.DoesNotExist
-
-    def perform_create(self, serializer):
-        """
-        Automatically set the artist to the logged-in user's artist
-        when creating a new track.
-        """
-        serializer.save(artist=self.request.user)

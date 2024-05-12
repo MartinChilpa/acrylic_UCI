@@ -299,6 +299,7 @@ REST_REGISTRATION = {
     'USER_PUBLIC_FIELDS': ['email', 'first_name', 'last_name'],
     'USER_EDITABLE_FIELDS': ['email', 'first_name', 'last_name', 'password', 'password_confirm', 'type'],
     'RESET_PASSWORD_VERIFICATION_ENABLED': True,
+    'SEND_RESET_PASSWORD_LINK_SERIALIZER_USE_EMAIL': True,
     'REGISTER_VERIFICATION_URL': f'{FRONTEND_BASE_URL}auth/verify-user/',
     'RESET_PASSWORD_VERIFICATION_URL': f'{FRONTEND_BASE_URL}auth/reset-password/',
     'REGISTER_EMAIL_VERIFICATION_URL': f'{FRONTEND_BASE_URL}auth/verify-email/',

@@ -1,11 +1,12 @@
 from rest_registration.api.views.register import RegisterView
-from rest_framework import viewsets, permissions, status
+from rest_framework import viewsets, permissions, status, filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.http import Http404
 from django.shortcuts import render
-from account.models import Account
-from account.serializers import RegisterSerializer, AccountSerializer, AccountUpdateSerializer
+from common.api.pagination import StandardPagination
+from account.models import Account, Document
+from account.serializers import RegisterSerializer, AccountSerializer, AccountUpdateSerializer, DocumentSerializer
 
 
 class RegisterView(RegisterView):
@@ -42,3 +43,31 @@ class AccountViewSet(viewsets.GenericViewSet):
                 serializer.save()
                 return Response(serializer.data)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class DocumentViewSet(viewsets.ModelViewSet):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = DocumentSerializer
+    queryset = Document.objects.none()
+    lookup_field = 'uuid'
+    pagination_class = StandardPagination
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['name', 'uuid']
+    ordering_fields = ['order']
+
+    def get_queryset(self):
+        return self.request.user.documents.all()
+
+    def get_document_object(self, uuid):
+        qs = self.get_queryset()
+        try:
+            return qs.get(uuid=uuid)
+        except Document.DoesNotExist:
+            raise Document.DoesNotExist
+
+    def perform_create(self, serializer):
+        """
+        Automatically set the artist to the logged-in user's artist
+        when creating a new track.
+        """
+        serializer.save(artist=self.request.user)

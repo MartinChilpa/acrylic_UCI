@@ -3,7 +3,7 @@ from rest_framework import serializers, fields
 from rest_registration.api.serializers import DefaultUserProfileSerializer, DefaultRegisterUserSerializer
 from django.contrib.auth import get_user_model
 from artist.models import Artist
-from account.models import Account
+from account.models import Account, Document
 
 
 User = get_user_model()
@@ -70,7 +70,6 @@ class RegisterSerializer(DefaultRegisterUserSerializer):
         return user
 
 
-
 class UserProfileSerializer(DefaultUserProfileSerializer):
     profile = fields.JSONField(write_only=True, default=dict, initial=dict)
 
@@ -103,3 +102,13 @@ class UserProfileSerializer(DefaultUserProfileSerializer):
             setattr(profile, attr, value)
         profile.save()
         return user
+
+
+class DocumentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Document
+        fields = ['uuid', 'name', 'document', 'type', 'created', 'updated']
+
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        return super().create(validated_data)

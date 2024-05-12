@@ -53,7 +53,7 @@ class Document(BaseModel):
         TOS = 'TOS', 'Terms of Service'
         TAX = 'TAX', 'Tax'
         OTHER = 'OTHER', 'Other'
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='transactions', on_delete=models.PROTECT)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='documents', on_delete=models.PROTECT)
     name = models.CharField(max_length=200)
     document = models.FileField(upload_to=get_upload_path)
     type = models.CharField(max_length=20, choices=Type.choices, default=Type.OTHER)

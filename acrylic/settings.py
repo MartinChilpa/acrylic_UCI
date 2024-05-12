@@ -295,6 +295,7 @@ REST_REGISTRATION = {
     # user registration
     'REGISTER_SERIALIZER_CLASS': 'account.serializers.RegisterSerializer',
     'REGISTER_OUTPUT_SERIALIZER_CLASS': 'account.serializers.RegisterDoneSerializer',
+    'USER_LOGIN_FIELDS': ['email', 'username'],
     'USER_HIDDEN_FIELDS': ['id', 'username', 'last_login', 'is_active', 'is_staff', 'is_superuser', 'user_permissions', 'groups', 'date_joined'],
     'USER_PUBLIC_FIELDS': ['email', 'first_name', 'last_name'],
     'USER_EDITABLE_FIELDS': ['email', 'first_name', 'last_name', 'password', 'password_confirm', 'type'],
@@ -304,6 +305,7 @@ REST_REGISTRATION = {
     'RESET_PASSWORD_VERIFICATION_URL': f'{FRONTEND_BASE_URL}auth/reset-password/',
     'REGISTER_EMAIL_VERIFICATION_URL': f'{FRONTEND_BASE_URL}auth/verify-email/',
     'VERIFICATION_FROM_EMAIL': 'noreply@acrylic.la',
+    'NOT_AUTHENTICATED_PERMISSION_CLASSES': [],
 }
 
 # JWT auth settings

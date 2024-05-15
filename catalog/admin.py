@@ -67,7 +67,7 @@ class TrackAdmin(ImportExportModelAdmin):
     @admin.display(ordering='snippet', description='Preview')
     def snippet_preview(self, obj):
         if obj.snippet:
-            return format_html(f'<a href="#" class="play" data-url="{obj.snippet}">Play</a>')
+            return format_html(f'<a href="#" class="play" data-url="{obj.snippet.url}">Play</a>')
         return ''
 
 

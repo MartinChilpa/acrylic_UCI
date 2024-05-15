@@ -33,6 +33,7 @@ ALLOWED_HOSTS = ['dev.platform.acrylic.la', 'platform.acrylic.la']
 # Application definition
 
 INSTALLED_APPS = [
+    'common',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -53,7 +54,6 @@ INSTALLED_APPS = [
     'corsheaders',
     'import_export',
     # project apps
-    'common',
     'account',
     'artist',
     'content',
@@ -282,7 +282,6 @@ SPECTACULAR_SETTINGS = {
     # OTHER SETTINGS
     
 }
-
 
 # prevent whitenoise: prevent Django throwing an error for references of static files which don't exist
 WHITENOISE_MANIFEST_STRICT = False

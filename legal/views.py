@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from common.api.pagination import StandardPagination
 from artist.permissions import IsTrackArtistOwner
 from legal.models import SplitSheet, PublishingSplit, MasterSplit
-from legal.serializers import SplitSheetSerializer, PublishingSplitSerializer, MasterSplitSerializer
+from legal.serializers import SplitSheetSerializer,SplitSheetReadSerializer, PublishingSplitSerializer, MasterSplitSerializer
 
 
 class MySplitSheetViewSet(viewsets.ModelViewSet):
@@ -21,3 +21,8 @@ class MySplitSheetViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(artist=self.request.user.artist)
+
+    def get_serializer_class(self):
+        if self.action in ['list', 'retrieve']:
+            return SplitSheetReadSerializer
+        return SplitSheetSerializer

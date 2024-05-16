@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from taggit.models import Tag
 from catalog.models import Distributor, Genre, Price, Track, SyncList, SyncListTrack
-from legal.serializers import MasterSplitSerializer
 
 
 class DistributorSerializer(serializers.ModelSerializer):
@@ -49,10 +48,19 @@ class MyTrackSerializer(serializers.ModelSerializer):
         }
 
 
+class TrackSummarySerializer(serializers.ModelSerializer):
+    artist = serializers.SlugRelatedField(slug_field='name', read_only=True)
+    class Meta:
+        model = Track
+        fields = [
+            'uuid', 'isrc', 'artist', 'name', 'duration', 'released', 'bpm',
+            'language', 'lyrics', 'snippet'
+        ]
+
+
 class TrackSerializer(serializers.ModelSerializer):
     artist = serializers.SlugRelatedField(slug_field='uuid', read_only=True)
     distributor = serializers.SlugRelatedField(slug_field='uuid', read_only=True)
-    master_splits = MasterSplitSerializer(many=True, read_only=True)
     tags = TagSerializer(many=True)
     genres = GenreSerializer(many=True)
     price = serializers.SlugRelatedField(slug_field='uuid', read_only=True)
@@ -63,7 +71,7 @@ class TrackSerializer(serializers.ModelSerializer):
             'uuid', 'isrc', 'artist', 'name', 'duration', 'released', 'is_cover',
             'is_remix', 'is_instrumental', 'is_explicit', 'bpm',
             'language', 'lyrics', 'distributor', 'snippet', 'genres', 
-            'additional_main_artists', 'featured_artists', 'tags', 'master_splits',
+            'additional_main_artists', 'featured_artists', 'tags',
             'price',
         ]
 

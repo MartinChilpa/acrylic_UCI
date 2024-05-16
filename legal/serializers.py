@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from catalog.models import Track
+from catalog.serializers import TrackSummarySerializer
 from legal.models import SplitSheet, MasterSplit, PublishingSplit
 
 
@@ -16,14 +17,20 @@ class PublishingSplitSerializer(serializers.ModelSerializer):
 
 
 
-class SplitSheetSerializer(serializers.ModelSerializer):
-    track = serializers.SlugRelatedField(slug_field='uuid', queryset=Track.objects.all())
+class SplitSheetReadSerializer(serializers.ModelSerializer):
+    track = TrackSummarySerializer(many=False, read_only=True)
     publishing_splits = PublishingSplitSerializer(many=True, required=False)
     master_splits = MasterSplitSerializer(many=True, required=False)
 
     class Meta:
         model = SplitSheet
         fields = ['track', 'track_name', 'signed', 'signature_request_id', 'created', 'updated', 'publishing_splits', 'master_splits']
+
+
+class SplitSheetSerializer(SplitSheetReadSerializer):
+    track = serializers.SlugRelatedField(slug_field='uuid', queryset=Track.objects.all())
+    publishing_splits = PublishingSplitSerializer(many=True, required=False)
+    master_splits = MasterSplitSerializer(many=True, required=False)
 
     def validate_track(self, value):
         user = self.context['request'].user

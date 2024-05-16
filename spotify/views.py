@@ -4,6 +4,7 @@ from rest_framework import status
 from spotify.engine import spotify_client
 from spotify.serializers import TrackPreviewSerializer
 
+
 class TrackPreviewViewSet(ViewSet):
     lookup_field = 'isrc'
 

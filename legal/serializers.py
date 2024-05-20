@@ -28,7 +28,7 @@ class SplitSheetReadSerializer(serializers.ModelSerializer):
 
 
 class SplitSheetSerializer(SplitSheetReadSerializer):
-    track = serializers.SlugRelatedField(slug_field='uuid', queryset=Track.objects.all())
+    track = serializers.SlugRelatedField(slug_field='uuid', queryset=Track.objects.all(), required=False)
     publishing_splits = PublishingSplitSerializer(many=True, required=False)
     master_splits = MasterSplitSerializer(many=True, required=False)
 

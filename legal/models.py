@@ -1,14 +1,16 @@
 from django.db import models
 from common.models import BaseModel
 from legal.validators import validate_percent
+from catalog.validators import validate_isrc
 
 
 class SplitSheet(BaseModel):
-    artist = models.ForeignKey('artist.Artist', related_name='split_sheets', on_delete=models.CASCADE) 
-    track = models.ForeignKey('catalog.Track', related_name='split_sheets', on_delete=models.CASCADE, blank=True, null=True)
+    artist = models.ForeignKey('artist.Artist', related_name='split_sheets', on_delete=models.CASCADE)
+    track = models.OneToOneField('catalog.Track', related_name='split_sheet', on_delete=models.CASCADE, blank=True, null=True)
+    isrc = models.CharField('ISRC', max_length=12, validators=[validate_isrc], blank=True)
     # alternative for when no track is selected
     track_name = models.CharField(max_length=150, blank=True)
-    
+
     # signature fields with Dropbox Sign
     signed = models.DateTimeField(blank=True, null=True, default=None)
     signature_request_id = models.CharField(max_length=50, blank=True)

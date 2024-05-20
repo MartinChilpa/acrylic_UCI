@@ -94,6 +94,7 @@ class Track(BaseModel):
 
     distributor = models.ForeignKey(Distributor, related_name='tracks', on_delete=models.SET_NULL, blank=True, null=True)
     other_distributor = models.CharField(max_length=100, blank=True)
+    other_distributor_email = models.EmailField(max_length=100, blank=True)
 
     # total_uses
     #price

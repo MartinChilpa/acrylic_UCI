@@ -49,7 +49,7 @@ reload_chartmetric_ids.short_description = 'Reload IDs from Chartmetric'
 @admin.register(Track)
 class TrackAdmin(ImportExportModelAdmin):
     queryset = Track.objects.select_related('artist')
-    list_display = ['isrc', 'name', 'artist_link', 'distributor', 'duration', 'released', 'snippet_preview', 'is_cover', 
+    list_display = ['isrc', 'cover_preview', 'name', 'artist_link', 'distributor', 'duration', 'released', 'snippet_preview', 'is_cover', 
                     'is_remix', 'is_instrumental', 'is_explicit', 'created', 'updated']
     list_filter = ['released', 'distributor', 'is_remix', 'is_cover', 'is_instrumental', 'created', 'updated']
     search_fields = ['uuid', 'isrc', 'name', 'duration', 'artist__name']
@@ -69,6 +69,14 @@ class TrackAdmin(ImportExportModelAdmin):
         if obj.snippet:
             return format_html(f'<a href="#" class="play" data-url="{obj.snippet.url}">Play</a>')
         return ''
+    
+    @admin.display(ordering='cover_image', description='Cover')
+    def cover_preview(self, obj):
+        if obj.cover_image:
+            return format_html(f'<img src="{obj.cover_image.url}" class="cover">')
+        return ''
+
+    
 
 
 class SyncListTrackInline(admin.TabularInline):

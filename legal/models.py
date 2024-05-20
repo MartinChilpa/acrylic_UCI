@@ -1,24 +1,36 @@
 from django.db import models
 from common.models import BaseModel
-from legal.validators import validate_percent
 from catalog.validators import validate_isrc
+from legal.validators import validate_percent
+from legal.tasks import request_signatures_task
 
 
 class SplitSheet(BaseModel):
+    class Status(models.TextChoices):
+        CREATED = 'CREATED', 'Created'
+        PENDING = 'PENDING', 'Pending signature'
+        SIGNED = 'SIGNED', 'Signed'
+        EXPIRED = 'EXPIRED', 'Signature expired'
+
     artist = models.ForeignKey('artist.Artist', related_name='split_sheets', on_delete=models.CASCADE)
     track = models.OneToOneField('catalog.Track', related_name='split_sheet', on_delete=models.CASCADE, blank=True, null=True)
     isrc = models.CharField('ISRC', max_length=12, validators=[validate_isrc], blank=True)
     # alternative for when no track is selected
     track_name = models.CharField(max_length=150, blank=True)
 
+    status = models.CharField(max_length=20, choices=Status.choices, default=Status.CREATED)
+    
     # signature fields with Dropbox Sign
-    signed = models.DateTimeField(blank=True, null=True, default=None)
     signature_request_id = models.CharField(max_length=50, blank=True)
+    signed = models.DateTimeField(blank=True, null=True, default=None)
 
     def __str__(self):
         if self.track:
             return self.track.name
         return self.track_name
+    
+    def request_signatures(self):
+        request_signatures_task.delay(self.id)
 
 
 class BaseSplitModel(BaseModel):

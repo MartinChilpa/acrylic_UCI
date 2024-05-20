@@ -1,29 +1,35 @@
 import io
 from dropbox_sign import ApiClient, ApiException, Configuration, apis, models
+from django.apps import apps
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
-from catalog.models import Track
 import weasyprint
 
 configuration = Configuration(username=settings.DROPBOX_SIGN_API_KEY)
 
 
-def send_signature_request_for_ownership_validation(track_id):
+def send_signature_request_for_ownership_validation(split_sheet):
 
-    track = get_object_or_404(Track, id=track_id)
+    SplitSheet = apps.get_model('legal', 'SplitSheet')
+
+    # avoid repeating signature request for same email in master/publishing splits
+    emails = {}
+    for split in split_sheet.master_splits.values_list('email', flat=True):
+        if split.email not in emails:
+            emails[split.email] = split.legal_name
+    for split in split_sheet.publishing_splits.values_list('email', flat=True):
+        if split.email not in emails:
+            emails[split.email] = split.legal_name
 
     with ApiClient(configuration) as api_client:
         signature_request_api = apis.SignatureRequestApi(api_client)
         #signature_request_id = ''
         signers = []
-        
+
         # add signers
-        for split in track.master_splits.all():
-            signer = models.SubSignatureRequestSigner(
-                email_address=split.owner_email,
-                name=split.owner_name,
-            )
+        for email, legal_name in emails.items():
+            signer = models.SubSignatureRequestSigner(email_address=email, name=legal_name)
             signers.append(signer)
 
         # configure options
@@ -36,7 +42,7 @@ def send_signature_request_for_ownership_validation(track_id):
         )
 
         # document in PDF format
-        html_string = render_to_string('legal/split_sheet_pdf.html', {'track': track})
+        html_string = render_to_string('legal/split_sheet_pdf.html', {'split_sheet': split_sheet})
         pdf_file = weasyprint.HTML(string=html_string).write_pdf()
         
         import tempfile
@@ -49,18 +55,16 @@ def send_signature_request_for_ownership_validation(track_id):
             #pdf_content = pdf_io.read() 
 
             data = models.SignatureRequestSendRequest(
-                title=f'Validate Ownership for {track.name}',
-                subject=f'Validate Ownership for {track.name}',
+                title=f'Sign split sheet for track {split_sheet.isrc}',
+                subject=f'Sign split sheet for track {split_sheet.isrc}',
                 message=f"""
-                    Please validate your ownership in the master of track "{track.name}" (ISRC: {track.isrc}) by {track.artist.name}. 
+                    Please sign the split sheet of the track with ISRC {split_sheet.isrc}. 
 
                     Click on the link below to validate your ownership.
 
                     Track information:
-                    - ISRC: {track.isrc}
-                    - Name: {track.name}
-                    - Artist: {track.artist.name}
-                    
+                    - ISRC: {split_sheet.isrc}
+
                     Best,
                     Acrylic.LA
                 """,
@@ -70,18 +74,18 @@ def send_signature_request_for_ownership_validation(track_id):
                 ],
                 files=[open(temp_file.name,  "rb")],
                 metadata={
-                    "isrc": track.isrc,
+                    "isrc": split_sheet.isrc,
                 },
                 signing_options=signing_options,
                 test_mode=True,
             )
-                
-            
+
             try:
                 response = response = signature_request_api.signature_request_send(data)
                 # save signature
-                track.signature_request_id = response.signature_request_id
-                track.save()
+                split_sheet.status = SplitSheet.Status.PENDING
+                split_sheet.signature_request_id = response.signature_request_id
+                split_sheet.save()
                 
             except ApiException as e:
                 print("Exception when calling Dropbox Sign API: %s\n" % e)

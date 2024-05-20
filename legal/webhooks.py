@@ -26,6 +26,6 @@ def hellosign_webhook(request):
         if signed_date:
             # Here you would update the MasterSplit instance with the datetime of signing
             # This is a simplified example. You will need to map the signature_request_id to your MasterSplit instance appropriately.
-            SplitSheet.objects.filter(signature_request_id=signature_request_id).update(signed=signed_date)
+            SplitSheet.objects.filter(signature_request_id=signature_request_id).update(signed=signed_date, status=SplitSheet.Status.SIGNED)
         return JsonResponse({'status': 'success'})
     return JsonResponse({'status': 'bad request'}, status=400)

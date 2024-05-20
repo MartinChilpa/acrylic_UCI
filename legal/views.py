@@ -1,5 +1,7 @@
 from rest_framework import viewsets, filters, status, permissions
 from rest_framework.response import Response
+from rest_framework.decorators import action
+from drf_spectacular.utils import extend_schema
 from django_filters import rest_framework as rest_filters
 from common.api.pagination import StandardPagination
 from artist.permissions import IsTrackArtistOwner
@@ -10,15 +12,17 @@ from legal.serializers import SplitSheetSerializer,SplitSheetReadSerializer, Pub
 
 class SplitSheetFilter(rest_filters.FilterSet):
     isrc = rest_filters.CharFilter()
+    is_signed = rest_filters.BooleanFilter(method='filter_signed_present')
 
-    def tags_filter(self, queryset, name, value):
+    def filter_signed_present(self, queryset, name, value):
         if value:
-            return queryset.filter(tags__in=value) 
-        return queryset
+            return queryset.exclude(signed=None)
+        else:
+            return queryset.filter(signed=None)
 
     class Meta:
         model = SplitSheet
-        fields = ['isrc']
+        fields = ['isrc', 'is_signed']
 
 
 class MySplitSheetViewSet(viewsets.ModelViewSet):
@@ -43,3 +47,16 @@ class MySplitSheetViewSet(viewsets.ModelViewSet):
         if self.action in ['list', 'retrieve']:
             return SplitSheetReadSerializer
         return SplitSheetSerializer
+
+    @extend_schema(
+        responses={201: None},
+        methods=['POST'],
+        description="Request track split sheet signatures to all master/publishing split owners via Drobpox Sign.",
+    )
+    @action(detail=True, methods=['post'], url_path='request-signatures')
+    def request_split_signatures(self, request, pk=None):
+        split_sheet = self.get_object()
+        # todo: check if there are any splits first
+        # generate document and send it to ...
+        split_sheet.request_signatures()
+        return Response({"detail": "Split sheet signatures requested."}, status=status.HTTP_200_OK)

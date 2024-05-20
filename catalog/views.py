@@ -10,7 +10,10 @@ from common.api.pagination import StandardPagination
 from artist.permissions import IsArtistOwner, IsTrackArtistOwner
 from legal.sign import send_signature_request_for_ownership_validation
 from catalog.models import Distributor, Track, Genre, Price, SyncList, SyncListTrack
-from catalog.serializers import DistributorSerializer, TrackSerializer, MyTrackSerializer, GenreSerializer, SyncListSerializer, SyncListTrackSerializer, PriceSerializer
+from catalog.serializers import (
+    DistributorSerializer, TrackSerializer, MyTrackSerializer, MyTrackReadSerializer, 
+    GenreSerializer, SyncListSerializer, SyncListTrackSerializer, PriceSerializer
+)
 
 
 
@@ -69,6 +72,11 @@ class MyTrackViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user_artist = self.request.user.artist
         return Track.objects.filter(artist=user_artist).select_related('distributor', 'artist').prefetch_related('genres', 'tags', 'additional_main_artists', 'featured_artists')
+
+    def get_serializer_class(self):
+        if self.action in ['list', 'retrieve']:
+            return MyTrackReadSerializer
+        return MyTrackSerializer
 
     def perform_create(self, serializer):
         """

@@ -6,6 +6,7 @@ from rest_framework import routers
 from rest_registration.api import views as registration_views
 API_VERSION = 'v1'
 
+from common import views as common_views
 from account import views as account_views
 from artist import views as artist_views
 from catalog import views as catalog_views
@@ -16,6 +17,11 @@ from spotify import views as spotify_views
 
 
 router = routers.DefaultRouter()
+
+# common public views
+router.register('countries', common_views.CountryViewSet, basename='country')
+
+# public views
 router.register('artists', artist_views.ArtistViewSet)
 router.register('tracks', catalog_views.TrackViewSet)
 router.register('genres', catalog_views.GenreViewSet)

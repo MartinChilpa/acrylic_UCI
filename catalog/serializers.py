@@ -34,7 +34,7 @@ class MyTrackSerializer(serializers.ModelSerializer):
     genres = GenreSerializer(many=True, required=False)
     additional_main_artists = serializers.SlugRelatedField(slug_field='uuid', read_only=True, many=True)
     featured_artists = serializers.SlugRelatedField(slug_field='uuid', read_only=True, many=True)
-    price = PriceSerializer(many=False, required=False)
+    price = serializers.SlugRelatedField(slug_field='uuid', read_only=True, many=False)
 
     class Meta:
         model = Track
@@ -46,6 +46,10 @@ class MyTrackSerializer(serializers.ModelSerializer):
             'snippet': {'required': False},
             'cover_image': {'required': False},
         }
+
+
+class MyTrackReadSerializer(MyTrackSerializer):
+    price = PriceSerializer(many=False, read_only=True)
 
 
 class TrackSummarySerializer(serializers.ModelSerializer):

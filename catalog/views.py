@@ -16,7 +16,6 @@ from catalog.serializers import (
 )
 
 
-
 class TrackFilter(rest_filters.FilterSet):
     is_cover = rest_filters.BooleanFilter()
     is_remix = rest_filters.BooleanFilter()

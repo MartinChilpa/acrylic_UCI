@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'django_ses',
     'corsheaders',
     'import_export',
+    'sorl.thumbnail',
     # project apps
     'account',
     'artist',

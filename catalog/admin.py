@@ -4,6 +4,7 @@ from django.urls import reverse
 from django.utils.html import format_html
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
+from sorl.thumbnail import get_thumbnail
 from spotify.tasks import load_spotify_id
 from chartmetric.tasks import load_chartmetric_ids
 from catalog.models import Distributor, Genre, Price, Track, SyncList, SyncListTrack
@@ -73,7 +74,8 @@ class TrackAdmin(ImportExportModelAdmin):
     @admin.display(ordering='cover_image', description='Cover')
     def cover_preview(self, obj):
         if obj.cover_image:
-            return format_html(f'<img src="{obj.cover_image.url}" class="cover">')
+            thumbnail = get_thumbnail(my_file, '100x100', crop='center', quality=99)
+            return format_html(f'<img src="{thumbnail.url}" class="cover">')
         return ''
 
     

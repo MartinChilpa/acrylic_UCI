@@ -165,6 +165,9 @@ class Track(BaseModel):
     def get_duration(self):
         return timedelta(milliseconds=self.duration)
 
+    def get_duration_display(self):
+        return str(self.get_duration()).split('.')[0].split(':', 1)[-1]
+
     def get_latest_signed_splitsheet(self):
         return self.split_sheets.exclude(signed=None).order_by('-signed').first()
 

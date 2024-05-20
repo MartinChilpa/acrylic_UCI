@@ -5,7 +5,7 @@ from django.utils.html import format_html
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 from sorl.thumbnail import get_thumbnail
-from spotify.tasks import load_spotify_id
+from spotify.tasks import load_spotify_id, load_spotify_track_data
 from chartmetric.tasks import load_chartmetric_ids
 from catalog.models import Distributor, Genre, Price, Track, SyncList, SyncListTrack
 
@@ -41,6 +41,12 @@ def reload_spotify_ids(modeladmin, request, queryset):
 reload_spotify_ids.short_description = 'Reload Spotify IDs'
 
 
+def reload_spotify_data(modeladmin, request, queryset):
+    for track in queryset:
+        load_spotify_track_data.delay(track.id)
+reload_spotify_data.short_description = 'Reload Spotify cover image / 30s snippet'
+
+
 def reload_chartmetric_ids(modeladmin, request, queryset):
     for track in queryset:
         load_chartmetric_ids.delay(track.id)
@@ -49,21 +55,25 @@ reload_chartmetric_ids.short_description = 'Reload IDs from Chartmetric'
 
 @admin.register(Track)
 class TrackAdmin(ImportExportModelAdmin):
-    queryset = Track.objects.select_related('artist')
-    list_display = ['isrc', 'cover_preview', 'name', 'artist_link', 'distributor', 'duration', 'released', 'snippet_preview', 'is_cover', 
+    queryset = Track.objects.select_related('artist', 'distributor')
+    list_display = ['isrc', 'cover_preview', 'name', 'artist_link', 'distributor', 'duration_display', 'released', 'snippet_preview',
                     'is_remix', 'is_instrumental', 'is_explicit', 'created', 'updated']
-    list_filter = ['released', 'distributor', 'is_remix', 'is_cover', 'is_instrumental', 'created', 'updated']
-    search_fields = ['uuid', 'isrc', 'name', 'duration', 'artist__name']
+    list_filter = ['released', 'distributor', 'is_remix', 'is_instrumental', 'created', 'updated']
+    search_fields = ['uuid', 'isrc', 'name', 'artist__name']
     raw_id_fields = ['artist']
     filter_horizontal = ['genres', 'additional_main_artists', 'featured_artists']
     resource_classes = [TrackResource]
-    actions = [reload_spotify_ids, reload_chartmetric_ids]
+    actions = [reload_spotify_ids, reload_spotify_data, reload_chartmetric_ids]
     change_list_template = 'admin/catalog/track/change_list.html'
 
     @admin.display(ordering='artist', description='Artist')
     def artist_link(self, obj):
         link = reverse('admin:artist_artist_change', args=[obj.artist_id])
         return format_html(f'<a href="{link}">{obj.artist.name}</a>')
+
+    @admin.display(ordering='duration', description='Duration')
+    def duration_display(self, obj):
+        return obj.get_duration_display()
 
     @admin.display(ordering='snippet', description='Preview')
     def snippet_preview(self, obj):
@@ -77,8 +87,6 @@ class TrackAdmin(ImportExportModelAdmin):
             thumbnail = get_thumbnail(obj.cover_image, '100x100', crop='center', quality=99)
             return format_html(f'<img src="{thumbnail.url}" class="cover">')
         return ''
-
-    
 
 
 class SyncListTrackInline(admin.TabularInline):

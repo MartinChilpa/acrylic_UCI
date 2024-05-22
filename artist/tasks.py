@@ -31,7 +31,8 @@ def create_artist_in_hubspot_task(artist_id):
                     'phone': '',
                     # custom fields
                     'uuid': str(artist.uuid),
-                    'admin_url': reverse("admin:artist_artist_change", args=[artist.id]),
+                    'type': 'artist',
+                    'admin_url': 'https://platform.acrylic.la' + reverse("admin:artist_artist_change", args=[artist.id]),
                 }
             )
 

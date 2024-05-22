@@ -71,6 +71,9 @@ def load_spotify_track_data(track_id, force=False):
             if force or not track.snippet and track_info.get('preview_url', None):
                 snippet_file = requests.get(track_info['preview_url'])
                 track.snippet.save('snippet.mp3', ContentFile(snippet_file.content))
+            
+            # save track
+            track.save()
 
 
 @app.task

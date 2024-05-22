@@ -1,5 +1,6 @@
 import hubspot
-from hubspot.crm.contacts import SimplePublicObjectInput, ApiException
+from hubspot.crm.contacts import SimplePublicObjectInputForCreate
+from hubspot.crm.contacts.exceptions import ApiException
 from django.apps import apps
 from django.conf import settings
 from django.urls import reverse
@@ -22,7 +23,7 @@ def create_artist_in_hubspot_task(artist_id):
             api_client = hubspot.Client.create(access_token=settings.HUBSPOT_ACCESS_TOKEN)
 
             # Define the contact properties including custom fields
-            contact_properties = SimplePublicObjectInput(
+            contact_obj = SimplePublicObjectInputForCreate(
                 properties={
                     'email': artist.user.email,
                     'firstname': artist.name,
@@ -36,7 +37,7 @@ def create_artist_in_hubspot_task(artist_id):
 
             try:
                 # Create the contact
-                api_response = api_client.crm.contacts.basic_api.create(simple_public_object_input=contact_properties)
+                api_response = api_client.crm.contacts.basic_api.create(simple_public_object_input_for_create=contact_obj)
                 # add hubspot_id to artist
                 artist.hubspot_id = api_response.id
                 artist.save()

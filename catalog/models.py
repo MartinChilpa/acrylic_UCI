@@ -153,7 +153,7 @@ class Track(BaseModel):
     
     def save(self, *args, **kwargs):
         # load external ids when object is created
-        load_ids = False if not self.id else True
+        load_ids = True if not self.id else False
         super(Track, self).save(*args, **kwargs)
 
         if load_ids:

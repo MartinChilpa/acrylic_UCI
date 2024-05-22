@@ -39,7 +39,7 @@ class SplitSheet(BaseModel):
     
     def save(self, *args, **kwargs):
         # load external ids when object is created
-        load_track_data = False if not self.id else True
+        load_track_data = True if not self.id else False
         super(SplitSheet, self).save(*args, **kwargs)
 
         if load_track_data:

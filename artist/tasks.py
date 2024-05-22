@@ -27,7 +27,7 @@ def create_artist_in_hubspot_task(artist_id):
                     'phone': '',
                     # custom fields
                     'uuid': str(artist.uuid),
-                    reverse("admin:artist_artist_change", args=[artist.id])
+                    'admin_url': reverse("admin:artist_artist_change", args=[artist.id]),
                 }
             )
 

@@ -1,9 +1,12 @@
 import hubspot
 from hubspot.crm.contacts import SimplePublicObjectInput, ApiException
+from django.apps import apps
 from django.conf import settings
 from django.urls import reverse
+from acrylic.celery import app
 
 
+@app.task
 def create_artist_in_hubspot_task(artist_id):
 
     if settings.HUBSPOT_ACCESS_TOKEN:

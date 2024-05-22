@@ -98,6 +98,11 @@ class Artist(BaseModel):
             return f'https://app.chartmetric.com/artist/{self.chartmetric_id}'
         return ''
     
+    def get_spotify_url(self):
+        if self.spotify_id:
+            return f'https://open.spotify.com/artist/{self.spotify_id}'
+        return ''
+
     def get_hubspot_url(self):
         if self.hubspot_id:
             return f'https://app.hubspot.com/contacts/{settings.HUBSPOT_PORTAL_ID}/contact/{self.hubspot_id}/'

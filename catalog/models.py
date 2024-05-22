@@ -177,6 +177,16 @@ class Track(BaseModel):
 
     def get_price(self):
         return self.price or Price.objects.get(default=True)
+    
+    def get_spotify_url(self):
+        if self.spotify_id:
+            return f'https://open.spotify.com/track/{self.spotify_id}'
+        return ''
+    
+    def get_chartmetric_url(self):
+        if self.chartmetric_id:
+            return f'https://app.chartmetric.com/track/{self.chartmetric_id}/about'
+        return ''
 
 
 def get_sync_upload_path(instance, filename):

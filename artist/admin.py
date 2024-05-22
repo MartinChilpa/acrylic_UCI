@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.shortcuts import render, get_object_or_404
+from django.urls import path, reverse
 from django.utils.html import format_html
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
@@ -12,11 +14,35 @@ class ArtistResource(resources.ModelResource):
 
 @admin.register(Artist)
 class ArtistAdmin(admin.ModelAdmin):
-    list_display = ['uuid', 'name', 'country', 'kamrank', 'chartmetric_id', 'spotify_id', 'spotify_followers', 'instagram_followers', 'created', 'updated', 'is_active', 'artist_hubspot_link', 'artist_links']
+    list_display = ['view_object_link', 'name', 'country', 'kamrank', 'chartmetric_id', 'spotify_id', 'spotify_followers', 'instagram_followers', 'created', 'updated', 'is_active', 'artist_hubspot_link', 'artist_links']
     search_fields = ['uuid', 'name', 'bio', 'spotify_url', 'spotify_id', 'chartmetric_id', 'hubspot_id']
     list_filter= ['is_active', 'created', 'updated']
     raw_id_fields = ['user']
     resource_classes = [ArtistResource]
+
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path(
+                'view/<int:object_id>/',
+                self.admin_site.admin_view(self.view_object),
+                name='yourmodel_view_object',
+            ),
+        ]
+        return custom_urls + urls
+
+    def view_object(self, request, object_id, *args, **kwargs):
+        obj = get_object_or_404(Artist, pk=object_id)
+        context = dict(
+            self.admin_site.each_context(request),
+            title=obj.name,
+            object=obj,
+        )
+        return render(request, 'admin/artist/artist_detail.html', context)
+
+    def view_object_link(self, obj):
+        url = reverse('admin:yourmodel_view_object', args=[obj.id])
+        return format_html(f'<a href="{url}">{obj.uuid}</a>')
 
     @admin.display(description='Husbpot')
     def artist_hubspot_link(self, obj):

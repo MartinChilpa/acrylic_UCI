@@ -82,11 +82,9 @@ def split_sheet_load_spotify_data_task(split_sheet_id):
         spotify = spotify_client()
         results = spotify.search(q=f'isrc:{split_sheet.isrc}', type='track')
 
-        tracks = [t for t in results['tracks']['items'] if t['external_ids']['isrc'] == isrc]
+        tracks = [t for t in results['tracks']['items'] if t['external_ids']['isrc'] == split_sheet.isrc]
         if len(tracks) > 0:
-            track_data = tracks[1]
-            artist_data = track_data['artists'][0]
-
+            track_data = tracks[0]
             try:
                 image_url = track_data['album']['images'][0]['url']
             except KeyError:

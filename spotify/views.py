@@ -16,7 +16,7 @@ class TrackPreviewViewSet(ViewSet):
 
         tracks = [t for t in results['tracks']['items'] if t['external_ids']['isrc'] == isrc]
         if len(tracks) > 0:
-            track_data = tracks[1]
+            track_data = tracks[0]
             artist_data = track_data['artists'][0]
 
             try:

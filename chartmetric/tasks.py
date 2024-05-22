@@ -20,18 +20,19 @@ def load_chartmetric_ids(track_id, force=False):
             # chartmetric 1rps
             time.sleep(1.5)
             data = cm.get_track_artist_ids_from_isrc(track.isrc)
-            if 'error' not in data and getattr(data, 'obj') and len(data['obj']['tracks']) > 0:
-                track_data = data['obj']['tracks'][0]
-                if track_data['isrc'] == track.isrc:
-                    # ensure that ISRC matches
-                    track.chartmetric_id = track_data['id']
-                    print(f'Track: {track.chartmetric_id}')
-                    if not track.artist.chartmetric_id:
-                        artist = track.artist
-                        artist.chartmetric_id = track_data['artist'][0]['id']
-                        artist.save()
-                        print(f'Artist: {artist.chartmetric_id}')
-                    track.save()
+            if 'error' not in data and getattr(data, 'obj'):
+                if len(data['obj']['tracks']) > 0:
+                    track_data = data['obj']['tracks'][0]
+                    if track_data['isrc'] == track.isrc:
+                        # ensure that ISRC matches
+                        track.chartmetric_id = track_data['id']
+                        print(f'Track: {track.chartmetric_id}')
+                        if not track.artist.chartmetric_id:
+                            artist = track.artist
+                            artist.chartmetric_id = track_data['artist'][0]['id']
+                            artist.save()
+                            print(f'Artist: {artist.chartmetric_id}')
+                        track.save()
     return True
 
 

@@ -12,12 +12,18 @@ class ArtistResource(resources.ModelResource):
 
 @admin.register(Artist)
 class ArtistAdmin(admin.ModelAdmin):
-    list_display = ['uuid', 'name', 'country', 'kamrank', 'chartmetric_id', 'spotify_id', 'spotify_followers', 'instagram_followers', 'created', 'updated', 'is_active', 'artist_links']
+    list_display = ['uuid', 'name', 'country', 'kamrank', 'chartmetric_id', 'spotify_id', 'spotify_followers', 'instagram_followers', 'created', 'updated', 'is_active', 'artist_hubspot_link', 'artist_links']
     search_fields = ['uuid', 'name', 'bio', 'spotify_url', 'spotify_id', 'chartmetric_id']
     list_filter= ['is_active', 'created', 'updated']
     raw_id_fields = ['user']
     resource_classes = [ArtistResource]
 
+    @admin.display(description='Husbpot')
+    def artist_hubspot_link(self, obj):
+        if obj.hubspot_id:
+            return format_html(f'<a href="{obj.get_hubspot_url()}" target="_blank">{obj.hubspot_id}</a>')
+        return ''
+    
     @admin.display(description='Links')
     def artist_links(self, obj):
         html = ''

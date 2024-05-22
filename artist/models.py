@@ -32,6 +32,7 @@ class Artist(BaseModel):
     # external IDs
     spotify_id = models.CharField(max_length=30, blank=True)
     chartmetric_id = models.CharField(max_length=30, blank=True)
+    hubspot_id = models.CharField(max_length=30, blank=True)
 
     # social
     spotify_url = models.URLField(null=True, blank=True)
@@ -95,8 +96,12 @@ class Artist(BaseModel):
     def get_charmetric_url(self):
         if self.chartmetric_id:
             return f'https://app.chartmetric.com/artist/{self.chartmetric_id}'
-        else:
-            return ''
+        return ''
     
+    def get_hubspot_url(self):
+        if self.hubspot_id:
+            return f'https://app.hubspot.com/contacts/{settings.HUBSPOT_PORTAL_ID}/contact/{self.hubspot_id}/'
+        return ''
+
     def get_public_url(self):
         return f'{settings.ARTIST_PROFILE_BASE_URL}{self.slug}/'

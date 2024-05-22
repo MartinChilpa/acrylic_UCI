@@ -34,6 +34,9 @@ def create_artist_in_hubspot_task(artist_id):
             try:
                 # Create the contact
                 api_response = api_client.crm.contacts.basic_api.create(simple_public_object_input=contact_properties)
+                # add hubspot_id to artist
+                artist.hubspot_id = api_response.id
+                artist.save()
                 print("Contact created with ID:", api_response.id)
             except ApiException as e:
                 print("Exception when creating contact: %s\n" % e)

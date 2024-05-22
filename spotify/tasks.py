@@ -75,8 +75,8 @@ def split_sheet_load_spotify_data_task(split_sheet_id):
 
     try:
         # get track with spotify ID
-        track = SplitSheet.objects.get(id=split_sheet_id)
-    except Track.DoesNotExist:
+        split_sheet = SplitSheet.objects.get(id=split_sheet_id)
+    except SplitSheet.DoesNotExist:
         pass
     else:
         spotify = spotify_client()

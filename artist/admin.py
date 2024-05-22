@@ -13,7 +13,7 @@ class ArtistResource(resources.ModelResource):
 @admin.register(Artist)
 class ArtistAdmin(admin.ModelAdmin):
     list_display = ['uuid', 'name', 'country', 'kamrank', 'chartmetric_id', 'spotify_id', 'spotify_followers', 'instagram_followers', 'created', 'updated', 'is_active', 'artist_hubspot_link', 'artist_links']
-    search_fields = ['uuid', 'name', 'bio', 'spotify_url', 'spotify_id', 'chartmetric_id']
+    search_fields = ['uuid', 'name', 'bio', 'spotify_url', 'spotify_id', 'chartmetric_id', 'hubspot_id']
     list_filter= ['is_active', 'created', 'updated']
     raw_id_fields = ['user']
     resource_classes = [ArtistResource]

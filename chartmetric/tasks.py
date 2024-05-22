@@ -1,3 +1,4 @@
+import time
 import celery
 from django.apps import apps
 from chartmetric.engine import Chartmetric
@@ -16,6 +17,8 @@ def load_chartmetric_ids(track_id, force=False):
             # auth in chartmetric
             cm = Chartmetric()
             cm.authenticate()
+            # chartmetric 1rps
+            time.sleep(1.5)
             data = cm.get_track_artist_ids_from_isrc(track.isrc)
             if 'error' not in data and getattr(data, 'obj') and len(data['obj']['tracks']) > 0:
                 track_data = data['obj']['tracks'][0]
@@ -40,6 +43,9 @@ def load_chartmetric_stats(artist_id):
     cm = Chartmetric()
     cm.authenticate()
 
+    # chartmetric 1rps
+    time.sleep(1.5)
+    
     try:
         track = Track.objects.get(id=track_id)
     except Track.DoesNotExist:

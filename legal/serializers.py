@@ -24,7 +24,7 @@ class SplitSheetReadSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SplitSheet
-        fields = ['track', 'track_name', 'signed', 'signature_request_id', 'created', 'updated', 'publishing_splits', 'master_splits']
+        fields = ['isrc', 'track', 'track_name', 'signed', 'signature_request_id', 'created', 'updated', 'publishing_splits', 'master_splits']
 
 
 class SplitSheetSerializer(SplitSheetReadSerializer):

@@ -26,7 +26,7 @@ class ArtistAdmin(admin.ModelAdmin):
             path(
                 'view/<int:object_id>/',
                 self.admin_site.admin_view(self.view_object),
-                name='yourmodel_view_object',
+                name='artist_view_object',
             ),
         ]
         return custom_urls + urls
@@ -42,7 +42,7 @@ class ArtistAdmin(admin.ModelAdmin):
         return render(request, 'admin/artist/artist_detail.html', context)
 
     def view_object_link(self, obj):
-        url = reverse('admin:yourmodel_view_object', args=[obj.id])
+        url = reverse('admin:artist_view_object', args=[obj.id])
         return format_html(f'<a href="{url}">{obj.uuid}</a>')
 
     @admin.display(description='Husbpot')

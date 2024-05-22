@@ -32,7 +32,7 @@ def create_artist_in_hubspot_task(artist_id):
                     # custom fields
                     'uuid': str(artist.uuid),
                     'type': 'artist',
-                    'admin_url': 'https://platform.acrylic.la' + reverse("admin:artist_artist_change", args=[artist.id]),
+                    'admin_url': 'https://platform.acrylic.la' + reverse('admin:artist_view_object', args=[artist.id]),
                 }
             )
 

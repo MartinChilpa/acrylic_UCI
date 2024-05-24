@@ -71,6 +71,7 @@ class ArtistViewSet(viewsets.ReadOnlyModelViewSet):
 
 class MyArtistViewSet(viewsets.GenericViewSet):
     serializer_class = ArtistSerializer
+    pagination_class = StandardPagination
     queryset = Artist.objects.none()
     permission_classes = [permissions.IsAuthenticated, IsArtistOwner]
 

@@ -20,7 +20,7 @@ class Artist(BaseModel):
     name = models.CharField(max_length=250)
     slug = models.SlugField(max_length=100, blank=True) # slug for artist URL
     bio = models.TextField(blank=True)
-    hometown = models.CharField(max_length=250)
+    hometown = models.CharField(max_length=250, blank=True)
     country = CountryField(default='ES', blank_label='(seleccionar)')
 
     # images

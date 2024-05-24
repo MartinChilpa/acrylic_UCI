@@ -54,7 +54,7 @@ class MySplitSheetViewSet(viewsets.ModelViewSet):
         description="Request track split sheet signatures to all master/publishing split owners via Drobpox Sign.",
     )
     @action(detail=True, methods=['post'], url_path='request-signatures')
-    def request_split_signatures(self, request, pk=None):
+    def request_split_signatures(self, request, uuid=None):
         split_sheet = self.get_object()
         # todo: check if there are any splits first
         # generate document and send it to ...

@@ -33,7 +33,7 @@ class MySplitSheetViewSet(viewsets.ModelViewSet):
     pagination_class = StandardPagination
     filter_backends = [rest_filters.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_class = SplitSheetFilter
-    search_fields = ['isrc', 'track__name', 'track__uuid']
+    search_fields = ['isrc', 'track_name', 'track__name', 'track__uuid']
     ordering_fields = ['created', 'updated']
     #metadata_class = SimpleMetadata
 

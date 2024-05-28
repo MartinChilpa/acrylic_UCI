@@ -49,9 +49,11 @@ class PriceSerializer(serializers.ModelSerializer):
 
 
 class MyPriceSerializer(PriceSerializer):
+    available_tracks = serializers.SerializerMethodField()
+
     class Meta:
         model = Price
-        fields = PriceSerializer.Meta.fields + ['get_available_tracks']
+        fields = PriceSerializer.Meta.fields + ['available_tracks']
         queryset = PriceSerializer.Meta.queryset
 
     def get_available_tracks(self, obj):

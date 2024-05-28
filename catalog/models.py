@@ -69,7 +69,8 @@ class Price(BaseModel):
 
     def get_available_tracks(self, artist):
         if self.max_artist_tracks > 0:
-            return self.max_artist_tracks - artist.tracks.filter(price=self).count()
+            available_tracks = self.max_artist_tracks - artist.tracks.filter(price=self).count()
+            return available_tracks if available_tracks > 0 else 0
         return 'unlimited'
 
     def __str__(self):

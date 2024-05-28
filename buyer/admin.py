@@ -1,3 +1,7 @@
 from django.contrib import admin
+from buyer.models import Tier
 
-# Register your models here.
+
+@admin.register(Tier)
+class TierAdmin(admin.ModelAdmin):
+    list_display = ['uuid', 'code', 'name', 'description']

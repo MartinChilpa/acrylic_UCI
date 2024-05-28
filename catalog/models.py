@@ -34,7 +34,7 @@ class Genre(BaseModel):
     
     class Meta:
         ordering = ['name']
-        indexes = [
+        indexes = BaseModel.Meta.indexes + [
             models.Index(fields=['name']),
             models.Index(fields=['code']),
         ]
@@ -56,15 +56,14 @@ def get_upload_path(instance, filename):
 class Price(BaseModel):
     name = models.CharField(max_length=150)
     description = models.TextField(blank=True)
-    single_use_price = models.DecimalField(max_digits=8, decimal_places=2)
-    max_artist_tracks = models.PositiveIntegerField('Max tracks per artist', default=0, help_text='Use 0 for unlimited')
+    max_artist_tracks = models.PositiveIntegerField('Max tracks/artist', default=0, help_text='Max tracks allowed per artist with this price. Use 0 for unlimited')
     default = models.BooleanField(default=False)
     active = models.BooleanField(default=False)
     order = models.PositiveBigIntegerField(default=0)
-    
+
     class Meta:
         ordering = ['order']
-        indexes = [
+        indexes = BaseModel.Meta.indexes + [
             models.Index(fields=['order']),
         ]
 
@@ -74,7 +73,28 @@ class Price(BaseModel):
         return 'unlimited'
 
     def __str__(self):
-        return self.name 
+        return self.name
+
+
+class TierPrice(BaseModel):
+    """ Tier price either linked to a price o to a given track """
+    price = models.ForeignKey('catalog.Price', related_name='tier_prices', on_delete=models.CASCADE)
+    #track = models.ForeignKey()
+    tier = models.ForeignKey('buyer.Tier', related_name='tier_prices', on_delete=models.PROTECT)
+    single_use_price = models.DecimalField(max_digits=8, decimal_places=2)
+    subscription_price = models.DecimalField(max_digits=8, decimal_places=2)
+
+    class Meta:
+        indexes = BaseModel.Meta.indexes
+        constraints = [
+            models.UniqueConstraint(
+                fields=['tier', 'price'], 
+                name='unique_tier_price'
+            )
+        ]
+
+    def __str__(self):
+        return f'{self.price} - {self.tier}'
 
 
 class Track(BaseModel):
@@ -142,7 +162,7 @@ class Track(BaseModel):
 
     class Meta:
         ordering = ['-id']
-        indexes = [
+        indexes = BaseModel.Meta.indexes + [
             models.Index(fields=['isrc']),
             models.Index(fields=['spotify_id']),
             models.Index(fields=['chartmetric_id']),
@@ -224,7 +244,7 @@ class SyncList(BaseModel):
         return self.name 
 
     class Meta:
-        indexes = [
+        indexes = BaseModel.Meta.indexes + [
             models.Index(fields=['order']),
         ]
 

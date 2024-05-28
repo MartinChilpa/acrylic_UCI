@@ -7,8 +7,8 @@ from import_export.admin import ImportExportModelAdmin
 from sorl.thumbnail import get_thumbnail
 from spotify.tasks import load_spotify_id, load_spotify_track_data
 from chartmetric.tasks import load_chartmetric_ids
-from catalog.models import Distributor, Genre, Price, Track, SyncList, SyncListTrack
-
+from catalog.models import Distributor, Genre, Price, TierPrice, Track, SyncList, SyncListTrack
+from buyer.models import Tier
 
 # import/export resources
 class TrackResource(resources.ModelResource):
@@ -30,9 +30,40 @@ class GenreAdmin(admin.ModelAdmin):
     list_filter = ['created', 'updated']
 
 
+class TierPriceInline(admin.TabularInline):
+    _tiers = 0
+
+    model = TierPrice
+    fields = ['tier', 'single_use_price', 'subscription_price']
+
+    extra = 0  # Set to 0 initially, will be determined dynamically
+    max_num = 0
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._tiers = Tier.objects.all()
+
+    def get_extra(self, request, obj=None, **kwargs):
+        return len(self._tiers)
+
+    def get_max_num(self, request, obj=None, **kwargs):
+        return len(self._tiers)
+
+    def get_formset(self, request, obj=None, **kwargs):
+        FormSet = super().get_formset(request, obj, **kwargs)
+        default_values = [{'tier': tier} for tier in self._tiers]
+
+        class CustomFormSet(FormSet):
+            def __init__(self, *args, **kwargs):
+                kwargs['initial'] = default_values
+                super().__init__(*args, **kwargs)
+        
+        return CustomFormSet
+
 @admin.register(Price)
 class PriceAdmin(admin.ModelAdmin):
-    list_display = ['name', 'single_use_price', 'max_artist_tracks', 'default', 'active', 'order']
+    list_display = ['name', 'max_artist_tracks', 'default', 'active', 'order']
+    inlines = [TierPriceInline]
 
 
 def reload_spotify_ids(modeladmin, request, queryset):

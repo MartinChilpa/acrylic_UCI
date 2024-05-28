@@ -75,7 +75,7 @@ class Artist(BaseModel):
 
     class Meta:
         ordering = ['-name']
-        indexes = [
+        indexes = BaseModel.Meta.indexes + [
             models.Index(fields=['name']),
             models.Index(fields=['spotify_id']),
             models.Index(fields=['chartmetric_id']),

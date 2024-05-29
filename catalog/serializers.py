@@ -42,7 +42,7 @@ class PriceSerializer(serializers.ModelSerializer):
     def get_min_price(self, obj):
         #lowest_price = obj.tier_prices.order_by('subscription_price').first()
         lowest_price = obj.tier_prices.order_by('single_use_price').first()
-        return lowest_price.subscription_price
+        return lowest_price.single_use_price
     
     def get_max_price(self, obj):
         highest_price = obj.tier_prices.order_by('-single_use_price').first()

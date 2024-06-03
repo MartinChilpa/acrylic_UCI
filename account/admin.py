@@ -21,11 +21,11 @@ class DocumentAdmin(admin.ModelAdmin):
 
 
 class InvitationResource(resources.ModelResource):
+    def get_import_fields(self):
+        return['email']        
     class Meta:
         model = Invitation
-        fields = []
-        import_order = ['email']
-        export_order = ['uuid', 'email', 'joined', 'created', 'updated']
+        fields = ['uuid', 'email', 'joined', 'created', 'updated']
 
 
 @admin.register(Invitation)

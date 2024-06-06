@@ -16,6 +16,7 @@ class Signwell():
     """
     base_url = 'https://www.signwell.com/api/v1/'
     api_key = settings.SIGNWELL_API_KEY
+    webhook_key = settings.SIGNWELL_WEBHOOK_KEY
 
     def _request(self, path, method, data={}):
         if method not in ['get', 'post', 'put']:
@@ -37,7 +38,7 @@ class Signwell():
         expected_signature = event['hash']
 
         # calculated signature
-        calculated_signature = hmac.new(self.api_key.encode('utf-8'), data.encode('utf-8'), hashlib.sha256).hexdigest()
+        calculated_signature = hmac.new(self.webhook_key.encode('utf-8'), data.encode('utf-8'), hashlib.sha256).hexdigest()
         return hmac.compare_digest(expected_signature, calculated_signature)  # Will be True if signatures match
 
     def request_signatures(self, documents, emails, subject, message):

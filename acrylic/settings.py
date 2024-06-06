@@ -332,6 +332,7 @@ THUMBNAIL_FORCE_OVERWRITE = True
 
 # SignWell
 SIGNWELL_API_KEY = config('SIGNWELL_API_KEY', default='')
+SIGNWELL_WEBHOOK_KEY = config('SIGNWELL_WEBHOOK_KEY', default='')
 SIGNWELL_TEST_MODE = True
 
 # Dropbox Sign

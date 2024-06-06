@@ -38,10 +38,9 @@ def splitsheet_request_signatures(split_sheet):
     signwell = Signwell()
     response = signwell.request_signatures(documents=[pdf_file], emails=emails, subject=subject, message=message)
 
-    # Print the response
-    if response.status_code == 200:
+    if response.status_code == 201:
+        # created
+        data = response.json()
         split_sheet.status = SplitSheet.Status.PENDING
-        split_sheet.signature_request_id = response.signature_request_id
+        split_sheet.signature_request_id = data['id']
         split_sheet.save()
-
-    print(response.json())

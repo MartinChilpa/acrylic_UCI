@@ -15,7 +15,7 @@ def signwell_webhook(request):
         event = data.get('event')
         
         sign_backend = Signwell()
-        if sign_backend.check_signature(data):
+        if sign_backend.check_signature(event):
             # signature valid
         
             signed_date = None

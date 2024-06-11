@@ -33,7 +33,8 @@ class DocumentAdmin(admin.ModelAdmin):
 class InvitationResource(ImportExportResource):
     class Meta:
         model = Invitation
-        fields = ['email']
+        fields = ['id', 'email']
+        exclude = ['id']
         import_fields = ['email']
         export_fields = ['uuid', 'email', 'joined', 'created', 'updated']
 

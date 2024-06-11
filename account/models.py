@@ -50,6 +50,7 @@ def get_upload_path(instance, filename):
 class Document(BaseModel):
     class Type(models.TextChoices):
         REVENUE_SHARE = 'REVENUE_SHARE', 'Revenue Share Agreement'
+        CONTRACT = 'CONTRACT', 'Contract'
         TOS = 'TOS', 'Terms of Service'
         TAX = 'TAX', 'Tax'
         OTHER = 'OTHER', 'Other'

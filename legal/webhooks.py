@@ -41,7 +41,7 @@ def signwell_webhook(request):
                 
                 else:                    
                     # get signed document PDF
-                    signed_pdf_content = sign_backend.get_signed_document(self, document_id)
+                    signed_pdf_content = sign_backend.get_signed_document(document.signature_request_id)
                     document.document.save(f'{document.uuid}.pdf', ContentFile(signed_pdf_content), save=False)
                     document.save()
 

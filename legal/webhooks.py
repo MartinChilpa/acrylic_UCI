@@ -1,10 +1,12 @@
 import datetime
 import json
+from django.core.files.base import ContentFile
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from legal.models import SplitSheet
 from legal.signwell import Signwell
+from account.models import Document
 
 
 @csrf_exempt
@@ -30,7 +32,19 @@ def signwell_webhook(request):
                 #        signed_date = datetime.utcfromtimestamp(int(signed_timestamp))
                 #        print(f"Document was signed on: {signed_date}")
 
-            SplitSheet.objects.filter(signature_request_id=signature_request_id).update(signed=datetime.datetime.now(), status=SplitSheet.Status.SIGNED)
+                try:
+                    document = Document.objects.get(signature_request_id=signature_request_id)
+
+                except Document.DoesNotExist:
+                    # no document with given ID: try to update split sheet with given ID
+                    SplitSheet.objects.filter(signature_request_id=signature_request_id).update(signed=datetime.datetime.now(), status=SplitSheet.Status.SIGNED)
+                
+                else:                    
+                    # get signed document PDF
+                    signed_pdf_content = sign_backend.get_signed_document(self, document_id)
+                    document.document.save(f'{document.uuid}.pdf', ContentFile(signed_pdf_content), save=False)
+                    document.save()
+
             return JsonResponse({'status': 'success'})
         return JsonResponse({'status': 'bad request'}, status=400)
 

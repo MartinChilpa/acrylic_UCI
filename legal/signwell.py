@@ -76,3 +76,7 @@ class Signwell():
             'recipients': recipients
         }
         return self._request('documents/', 'post', data) 
+
+    def get_signed_document(self, document_id):
+        response = self._request('documents/{document_id}/completed_pdf/', 'get')
+        return response.content

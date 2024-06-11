@@ -58,7 +58,14 @@ class Document(BaseModel):
     document = models.FileField(upload_to=get_upload_path)
     type = models.CharField(max_length=20, choices=Type.choices, default=Type.OTHER)
 
+    # digital signature provider
+    signature_request_id = models.CharField(max_length=50, blank=True)
+    signed = models.DateTimeField(blank=True, null=True, default=None)
+
     class Meta:
+        indexes = BaseModel.Meta.indexes + [
+            models.Index(fields=['signature_request_id']),
+        ]
         ordering = ['-created']
 
     def __str__(self):

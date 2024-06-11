@@ -28,9 +28,17 @@ class SplitSheet(BaseModel):
 
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.CREATED)
     
-    # signature fields with Dropbox Sign
+    # digital signature provider
     signature_request_id = models.CharField(max_length=50, blank=True)
     signed = models.DateTimeField(blank=True, null=True, default=None)
+
+    class Meta:
+        indexes = BaseModel.Meta.indexes + [
+            models.Index(fields=['signature_request_id']),
+            models.Index(fields=['signed']),
+            models.Index(fields=['status']),
+            models.Index(fields=['isrc']),
+        ]
 
     def __str__(self):
         if self.track:

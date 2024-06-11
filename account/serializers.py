@@ -45,13 +45,14 @@ class RegisterSerializer(DefaultRegisterUserSerializer):
     def get_fields(self):
         fields = super().get_fields()
         fields['type'] = serializers.ChoiceField(choices=['artist', 'artist'])
+        fields['spotify_url'] = serializers.URLField(required=False)
         return fields
 
     def create(self, validated_data):
         data = validated_data.copy()
         
         user_type = data.pop('type')
-
+        
         # set username as base64 email
         data['username'] = data['email']
         if self.has_password_confirm_field():
@@ -70,8 +71,10 @@ class RegisterSerializer(DefaultRegisterUserSerializer):
             invitation.save()
 
         if user_type == 'artist':
+            spotify_url = data.pop('spotify_url')
+
             # create related artist profile
-            artist = Artist.objects.create(user=user)
+            artist = Artist.objects.create(user=user, spotify_url=spotify_url)
             # request contract signature
             request_contract_signature_task.delay(artist.id)
         

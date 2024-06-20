@@ -78,12 +78,6 @@ class RegisterSerializer(DefaultRegisterUserSerializer):
             # request contract signature
             request_contract_signature_task.delay(artist.id)
         
-        #profile_data = validated_data.pop('profile')
-        # update profile
-        #profile = user.artist
-        #for attr, value in profile_data.items():
-        #    setattr(profile, attr, value)
-        #profile.save()
         return user
 
 

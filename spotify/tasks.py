@@ -23,10 +23,10 @@ def load_spotify_artist_data(artist_id):
                 artist_id = parts[-1]
             
             spotify = spotify_client()
-            results = spotify.artist(artist_id)
-            artist_name = artist['name']
-            bio = artist.get('biography', artist.get('description', ''))
-            images = artist.get('images', [])
+            artist_data = spotify.artist(artist_id)
+            artist_name = artist_data['name']
+            bio = artist_data.get('biography', artist_data.get('description', ''))
+            images = artist_data.get('images', [])
             image_url = images[0]['url'] if images else None
 
             artist.name = artist_name

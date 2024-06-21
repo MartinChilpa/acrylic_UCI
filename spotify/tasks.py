@@ -15,11 +15,11 @@ def load_spotify_artist_data(artist_id):
     else:
         if artist.spotify_url:
             # Extract artist ID from URI if provided
-            if 'spotify:artist:' in spotify_url:
-                artist_id = spotify_url.split('spotify:artist:')[1]
+            if 'spotify:artist:' in artist.spotify_url:
+                artist_id = artist.spotify_url.split('spotify:artist:')[1]
             else:
                 # If URL is provided, extract artist ID from the URL
-                parts = spotify_url.split('/')
+                parts = artist.spotify_url.split('/')
                 artist_id = parts[-1]
             
             spotify = spotify_client()

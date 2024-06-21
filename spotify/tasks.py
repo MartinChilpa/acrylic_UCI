@@ -6,6 +6,7 @@ from django.core.files.base import ContentFile
 from acrylic.celery import app
 
 
+@app.task
 def load_spotify_artist_data(artist_id):
     Artist = apps.get_model('artist', 'Artist')
     try:

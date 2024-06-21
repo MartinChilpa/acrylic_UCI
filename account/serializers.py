@@ -53,11 +53,12 @@ class RegisterSerializer(DefaultRegisterUserSerializer):
         
         user_type = data.pop('type')
         
+        spotify_url = ''
         if user_type == 'artist':
             # additional artist data
             spotify_url = data.pop('spotify_url')
         
-        # set username as base64 email
+        # set email as username
         data['username'] = data['email']
         if self.has_password_confirm_field():
             del data['password_confirm']

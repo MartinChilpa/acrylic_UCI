@@ -20,18 +20,19 @@ def load_spotify_artist_data(artist_id):
                 artist_id = artist.spotify_url.split('spotify:artist:')[1]
             else:
                 # If URL is provided, extract artist ID from the URL
-                parts = artist.spotify_url.split('/')
-                artist_id = parts[-1]
+                artist_id = artist.spotify_url.split('/')[-1]
             
             spotify = spotify_client()
             artist_data = spotify.artist(artist_id)
+            spotify_id = artist_data['id']
             artist_name = artist_data['name']
-            bio = artist_data.get('biography', artist_data.get('description', ''))
+            #bio = artist_data.get('biography', artist_data.get('description', ''))
             images = artist_data.get('images', [])
             image_url = images[0]['url'] if images else None
 
+            artist.spotify_id = spotify_id
             artist.name = artist_name
-            artist.bio = bio
+            #artist.bio = bio
             if image_url and not artist.image:
                 # update artist image
                 image_file = requests.get(image_url)

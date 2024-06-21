@@ -53,6 +53,10 @@ class RegisterSerializer(DefaultRegisterUserSerializer):
         
         user_type = data.pop('type')
         
+        if user_type == 'artist':
+            # additional artist data
+            spotify_url = data.pop('spotify_url')
+        
         # set username as base64 email
         data['username'] = data['email']
         if self.has_password_confirm_field():
@@ -71,8 +75,6 @@ class RegisterSerializer(DefaultRegisterUserSerializer):
             invitation.save()
 
         if user_type == 'artist':
-            spotify_url = data.pop('spotify_url')
-
             # create related artist profile
             artist = Artist.objects.create(user=user, spotify_url=spotify_url)
             # request contract signature

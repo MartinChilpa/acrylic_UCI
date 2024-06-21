@@ -41,6 +41,6 @@ class InvitationResource(ImportExportResource):
 
 @admin.register(Invitation)
 class InvitationAdmin(ImportExportModelAdmin):
-    list_display = ['email', 'joined', 'created', 'updated']
+    list_display = ['email', 'joined', 'invited_by', 'created', 'updated']
     search_fields = ['email']
     resource_classes = [InvitationResource]

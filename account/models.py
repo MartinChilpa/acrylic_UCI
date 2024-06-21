@@ -76,9 +76,8 @@ class Document(BaseModel):
 class Invitation(BaseModel):
     email = models.EmailField(unique=True)
     joined = models.BooleanField(editable=False, default=False)
+    invited_by = models.ForeignKey('auth.User', related_name='invitations', blank=True, null=True, on_delete=models.PROTECT)
 
     def __str__(self):
         return self.email
-
-
 

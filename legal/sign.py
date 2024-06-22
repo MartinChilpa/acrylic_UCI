@@ -62,7 +62,7 @@ def splitsheet_request_signatures(split_sheet):
 
     # remove master/publishing duplicates
     emails = {}
-    for email, name in master_emails + publishing_emails:
+    for email, name in list(master_emails) + list(publishing_emails):
         if email not in emails:
             emails[email] = name
     emails = emails.items()

@@ -77,8 +77,12 @@ class Document(BaseModel):
 
 
 class Invitation(BaseModel):
+    class Language(models.TextChoices):
+        EN = 'en', 'English'
+        ES = 'es', 'Español'
     email = models.EmailField(unique=True)
     joined = models.BooleanField(editable=False, default=False)
+    language = models.CharField(max_length=2, choices=Language.choices, default=Language.EN)
     invited_by = models.ForeignKey('auth.User', related_name='invitations', blank=True, null=True, on_delete=models.PROTECT)
 
     def __str__(self):

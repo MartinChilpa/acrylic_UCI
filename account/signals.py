@@ -9,4 +9,4 @@ def invitation_created(sender, instance, created, **kwargs):
     """ when an artist is created """
     if created:
             # send inivitation email
-            send_registration_invite(instance.email)
+            send_registration_invite(instance.email, instance.language)

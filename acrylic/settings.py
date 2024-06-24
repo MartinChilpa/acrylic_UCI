@@ -54,7 +54,6 @@ INSTALLED_APPS = [
     'corsheaders',
     'import_export',
     'sorl.thumbnail',
-    'django_celery_monitor',
     # project apps
     'account',
     'artist',

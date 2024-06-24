@@ -34,7 +34,7 @@ class InvitationResource(ImportExportResource):
     class Meta:
         model = Invitation
         fields = ['id', 'email']
-        exclude = ['id']
+        #exclude = ['id']
         import_fields = ['email']
         export_fields = ['uuid', 'email', 'joined', 'created', 'updated']
 

@@ -15,7 +15,7 @@ def artist_created(sender, instance, created, **kwargs):
         load_spotify_artist_data(instance.id)
 
         # request contract signature
-        request_contract_signature_task.delay(instance.id)
+        request_contract_signature_task(instance.id)
 
         # add artist to hubspot
-        create_artist_in_hubspot_task.delay(instance.id)
+        create_artist_in_hubspot_task(instance.id)

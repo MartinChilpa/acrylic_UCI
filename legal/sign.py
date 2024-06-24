@@ -17,7 +17,7 @@ def contract_request_signature(artist):
 
     # document in PDF format
     html_string = render_to_string('legal/artist_contract_pdf.html', {'artist': artist})
-    pdf_file = weasyprint.HTML(string=html_string).write_pdf(stylesheets=[weasyprint.CSS(finders.find('css/pdf_legal.css'))])
+    pdf_file = weasyprint.HTML(string=html_string, base_url=settings.BASE_URL).write_pdf(stylesheets=[weasyprint.CSS(finders.find('css/pdf_legal.css'))])
 
     # Save the PDF to a model instance
     document = Document(
@@ -69,7 +69,7 @@ def splitsheet_request_signatures(split_sheet):
 
     # document in PDF format
     html_string = render_to_string('legal/split_sheet_pdf.html', {'split_sheet': split_sheet})
-    pdf_file = weasyprint.HTML(string=html_string).write_pdf(stylesheets=[weasyprint.CSS(finders.find('css/pdf_legal.css'))])
+    pdf_file = weasyprint.HTML(string=html_string, base_url=settings.BASE_URL).write_pdf(stylesheets=[weasyprint.CSS(finders.find('css/pdf_legal.css'))])
 
     subject = f'Sign split sheet for track {split_sheet.isrc}'
     message = f"""

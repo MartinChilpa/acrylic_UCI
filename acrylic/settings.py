@@ -292,6 +292,7 @@ SPECTACULAR_SETTINGS = {
 # prevent whitenoise: prevent Django throwing an error for references of static files which don't exist
 WHITENOISE_MANIFEST_STRICT = False
 
+BASE_URL = os.environ.get('BASE_URL', 'https://platform.acrylic.la/')
 FRONTEND_BASE_URL = os.environ.get('FRONTEND_BASE_URL', 'https://app.acrylic.la/')
 
 REST_REGISTRATION = {

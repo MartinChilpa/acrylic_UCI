@@ -1,3 +1,24 @@
+.environment {
+    text-transform:uppercase;
+    text-align:center;
+    padding:4px 8px;
+    font-size:12px;
+    font-weight:bold;
+    white-space:nowrap;
+    letter-spacing:0.5px;
+    color:#fff;
+    border-radius:4px;
+    margin-left:10px;
+}
+
+.environment.DEV {
+    background:#EB8A6C;
+}
+
+.environment.PRO {
+    background:#b14422;
+}
+
 /* status */
 .status {
     text-transform:uppercase;

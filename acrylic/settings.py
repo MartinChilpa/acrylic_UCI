@@ -91,6 +91,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'common.context_processor.django_settings',
             ],
         },
     },
@@ -200,6 +201,8 @@ CORS_ALLOW_HEADERS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
+ENVIRONMENT = config('ENVIRONMENT', 'DEV')
 
 # Email settings
 EMAIL_BACKEND = 'django_ses.SESBackend'

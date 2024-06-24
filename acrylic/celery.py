@@ -9,10 +9,10 @@ app = Celery('acrylic')
 #app.config_from_object('django.conf:settings', namespace='CELERY')
 
 app.conf.update(
-    BROKER_URL=config('REDISCLOUD_URL', ''),
-    CELERY_RESULT_BACKEND=config('REDISCLOUD_URL', ''),
+    broker_url=config('REDISCLOUD_URL', ''),
+    result_backend=config('REDISCLOUD_URL', ''),
     #CELERY_ALWAYS_EAGER=True,
-    BROKER_TRANSPORT_OPTIONS={
+    broker_transport_options={
         'max_retries': 5,
         'max_connections': 30,
     }

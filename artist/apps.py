@@ -6,4 +6,4 @@ class ArtistConfig(AppConfig):
     name = 'artist'
 
     def ready(self):
-        import artist.signals
+        from . import signals

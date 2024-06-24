@@ -4,6 +4,7 @@ from django.core.files.base import ContentFile
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
+from django.utils import timezone
 from legal.models import SplitSheet
 from legal.signwell import Signwell
 from account.models import Document
@@ -37,12 +38,13 @@ def signwell_webhook(request):
 
                 except Document.DoesNotExist:
                     # no document with given ID: try to update split sheet with given ID
-                    SplitSheet.objects.filter(signature_request_id=signature_request_id).update(signed=datetime.datetime.now(), status=SplitSheet.Status.SIGNED)
+                    SplitSheet.objects.filter(signature_request_id=signature_request_id).update(signed=timezone.now(), status=SplitSheet.Status.SIGNED)
                 
                 else:
                     # get signed document PDF
                     # signed_pdf_content = sign_backend.get_signed_document(document.signature_request_id)
                     # document.signed_document.save(f'{document.uuid}.pdf', ContentFile(signed_pdf_content), save=False)
+                    document.signed = timezone.now()
                     document.save()
 
             return JsonResponse({'status': 'success'})

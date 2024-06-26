@@ -25,7 +25,7 @@ ADMINS = [
 SECRET_KEY = 'django-insecure-i7!0w_w7d=x+h*v@n)_lr)_onr!5(la3-1wzca=6mz^_jl0^em'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['dev.platform.acrylic.la', 'platform.acrylic.la']
 

@@ -39,8 +39,6 @@ Acrylic Platform is a Django-based web backend application that facilitates musi
 
 ### System Architecture
 
-```markdown:/Users/amele/Documents/Projects/acrylic/docs/README.md
-<code_block_to_apply_changes_from>
 ```
 ┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
 │   Angular       │    │   Django REST    │    │   PostgreSQL    │
@@ -384,11 +382,6 @@ celery -A acrylic beat -l info
 
 ## Development Guidelines
 
-### Code Style
-- Follow PEP 8 for Python code style
-- Use Django's coding conventions
-- Implement proper error handling and logging
-
 ### Model Guidelines
 - Always inherit from `BaseModel` for new models
 - Add appropriate indexes for performance
@@ -401,16 +394,6 @@ celery -A acrylic beat -l info
 - Add pagination for list endpoints
 - Include comprehensive API documentation
 
-### Testing
-- Write unit tests for all models and views
-- Use Django's testing framework
-- Maintain test coverage above 80%
-
-### Git Workflow
-- Use feature branches for new development
-- Write descriptive commit messages
-- Create pull requests for code review
-- Deploy from `main` branch to production
 
 ## Deployment
 

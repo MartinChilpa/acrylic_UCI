@@ -1,0 +1,145 @@
+{% extends "admin/base_site.html" %}
+{% load i18n thumbnail %}
+
+{% block content %}
+  <h3>{{ artist.uuid }}</h3>
+
+  {% if artist.image %}
+    <img src="{{ artist.image.url }}" style="width:200px;">
+  {% endif %}
+  
+  <p>
+    <a href="{% url 'admin:artist_artist_changelist' %}">{% trans "Back to list" %}</a><br>
+    <a href="{% url 'admin:artist_artist_change' artist.id %}">{% trans "Edit artist" %}</a>
+  </p>
+
+  <p>
+    {% if artist.hubspot_id %}
+      <a href="{{ artist.get_hubspot_url }}" target="_blank">Open in HubSpot ↗</a><br>
+    {% endif %}
+    {% if artist.spotify_id %}
+      Spotify: <a href="{{ artist.get_spotify_url }}" target="_blank">{{ artist.spotify_id }}</a><br>
+    {% endif %}
+    {% if artist.chartmetric_id %}
+      Chartmetric: <a href="{{ artist.get_chartmetric_url }}" target="_blank">{{ artist.chartmetric_id }}</a><br>
+    {% endif %}
+  </p>
+
+  <h2>Stats</h2>
+
+  <h3>KAMRank #{{ artist.kamrank }}</h3>
+  <h3>From Chartmetric</h3>
+  <table>
+    <tbody>
+      <tr>
+        <th>Spotify Popularity</th>
+        <td>{{ artist.spotify_popularity }}</td>
+      </tr>
+      <tr>
+        <th>Spotify Monthly Listeners</th>
+        <td>{{ artist.spotify_monthly_listeners }}</td>
+      </tr>
+      <tr>
+        <th>Spotify Followers</th>
+        <td>{{ artist.spotify_followers }}</td>
+      </tr>
+      <tr>
+        <th>Instagram Followers</th>
+        <td class="right">{{ artist.instagram_followers }}</td>
+      </tr>
+      <tr>
+        <th>TikTok Followers</th>
+        <td>{{ artist.tiktok_followers }}</td>
+      </tr>
+      <tr>
+        <th>TikTok Likes</th>
+        <td>{{ artist.tiktok_likes }}</td>
+      </tr>
+    </tbody>
+  </table>
+    
+
+  <h2>Split Sheets</h2>
+
+  {% with split_sheets=artist.split_sheets.all %}
+    {% if split_sheets %}
+      <table>
+        <thead>
+          <th>ISRC</th>
+          <th>Status</th>
+          <th>Signature request ID</th>
+          <th>Signed</th>
+          <th>Created</th>
+          <th>Updated</th>
+        </thead>
+        <tbody>
+          {% for split_sheet in split_sheets %}
+            <tr>
+              <td>{{ split_sheet.isrc }}</td>
+              <td class="status {{ split_sheet.status }}">{{ split_sheet.get_status_display }}</td>
+              <td>{{ split_sheet.signature_request_id }}</td>
+              <td>{{ split_sheet.signed }}</td>
+              <td>{{ split_sheet.created }}</td>
+              <td>{{ split_sheet.updated }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>No split sheets yet.</p>
+    {% endif %}
+  {% endwith %}
+
+
+  <h2>Tracks</h2>
+  {% if tracks %}
+    <table>
+      <thead>
+        <th>ISRC</th>
+        <th>Name</th>
+        <th>Cover</th>
+        <th>Distributor</th>
+        <th>Duration</th>
+        <th>Snippet</th>
+        <th>Spotify ID</th>
+        <th>Chartmetric ID</th>
+        <th>Price</th>
+        <th>Updated</th>
+      </thead>
+      <tbody>
+      {% for track in tracks %}
+        <tr>
+          <td>{{ track.isrc }}</td>
+          <td>{{ track.name }}</td>
+          <td>
+            {% if track.cover_image %}
+              {% thumbnail track.cover_image "100x100" crop="center" as im %}
+                <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+              {% endthumbnail %}
+            {% endif %}
+          </td>
+          <td>{{ track.distributor|default:"-" }}</td>
+          <td>{{ track.get_duration_display }}</td>
+          <td>{% if track.snippet %}<a href="{{ track.snippet.url }}" target="_blank">Play</a>{% endif %}</td>
+          <td><a href="{{ track.get_spotify_url }}" target="_blank">{{ track.spotify_id }}</a></td>
+          <td><a href="{{ track.get_spotify_url }}" target="_blank">{{ track.chartmetric_id }}</a></td>
+          <td>{{ track.price|default:"Basic" }}</td>
+          <td>{{ track.updated }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p>No tracks yet.</p>
+  {% endif %}
+  
+  <div>
+
+  
+
+    <p>{{ object.field2 }}</p> <!-- Example field -->
+    <!-- Add more fields as necessary -->
+  </div>
+
+  
+{% endblock %}

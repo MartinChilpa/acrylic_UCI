@@ -1,0 +1,55 @@
+.environment {
+    text-transform:uppercase;
+    text-align:center;
+    padding:4px 8px;
+    font-size:12px;
+    font-weight:bold;
+    white-space:nowrap;
+    letter-spacing:0.5px;
+    color:#fff;
+    border-radius:4px;
+    margin-left:10px;
+}
+
+.environment.DEV {
+    background:#EB8A6C;
+}
+
+.environment.PRO {
+    background:#b14422;
+}
+
+/* status */
+.status {
+    text-transform:uppercase;
+    text-align:center;
+    padding:4px 8px;
+    color:#fff;
+    font-size:10px;
+    white-space:nowrap;
+    letter-spacing:0.5px;
+}
+.disabled .status, .disabled img {
+    opacity:0.4;
+}
+
+.status.big {
+    padding:8px 20px;
+    font-size:12px;
+}
+
+td .status {
+    display:block;
+}
+.status.CREATED, .status.PENDING {
+    background:#EB8A6C;
+}
+.status.paused, .status.EXPIRED {
+    background:#07D7D3;
+}
+.status.CANCELED, .status {
+    background:#C24343;
+}
+.status.SIGNED, .status.ACTIVE, .status.SENT {
+    background:#20E19D;
+}

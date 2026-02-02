@@ -36,7 +36,7 @@ def load_spotify_artist_data(artist_id):
             if image_url and not artist.image:
                 # update artist image
                 image_file = requests.get(image_url)
-                artist.image.save('profile.jpg', ContentFile(image_file.content))
+                #artist.image.save('profile.jpg', ContentFile(image_file.content))
             
             # save artist
             artist.save()

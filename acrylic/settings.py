@@ -119,7 +119,7 @@ DATABASES = {
 #}
 
 AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
+    #'django.contrib.auth.backends.ModelBackend',
     'common.auth.EmailAuthBackend',
 ]
 
@@ -205,7 +205,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 ENVIRONMENT = config('ENVIRONMENT', 'DEV')
 
 # Email settings
-EMAIL_BACKEND = 'django_ses.SESBackend'
+#EMAIL_BACKEND = 'django_ses.SESBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
+
+
 EMAIL_HOST = os.environ.get('EMAIL_HOST', '')
 EMAIL_PORT = 25
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
@@ -409,3 +414,9 @@ sentry_sdk.init(
     # django.contrib.auth) you may enable sending PII data.
     send_default_pii=True
 )
+
+
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/1'

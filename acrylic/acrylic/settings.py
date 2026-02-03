@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-i7!0w_w7d=x+h*v@n)_lr)_onr!5(la3-1wzca=6mz^_jl0^em
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['dev.platform.acrylic.la', 'platform.acrylic.la']
+ALLOWED_HOSTS = ['dev.platform.acrylic.la', 'platform.acrylic.la','127.0.0.1']
 
 
 # Application definition
@@ -205,7 +205,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 ENVIRONMENT = config('ENVIRONMENT', 'DEV')
 
 # Email settings
-EMAIL_BACKEND = 'django_ses.SESBackend'
+#EMAIL_BACKEND = 'django_ses.SESBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
+
+
 EMAIL_HOST = os.environ.get('EMAIL_HOST', '')
 EMAIL_PORT = 25
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
@@ -228,14 +233,18 @@ STORAGES = {
     },
 }
 
-AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID', default='')
-AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY', '')
-AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME', '')
+AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID', default='')
+AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY', '')
+AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME', default='crylic-private-dev')
 
-PUBLIC_S3_BUCKET = os.environ.get('PUBLIC_S3_BUCKET', '')
+AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME', default='acrylic-private-dev')
+print(f"DEBUG: El bucket configurado es -> {AWS_STORAGE_BUCKET_NAME}")
+
+PUBLIC_S3_BUCKET = os.environ.get('PUBLIC_S3_BUCKET', 'acrylic-private-dev')
 
 # AWS_DEFAULT_ACL = 'private'
-AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME', '')
+#AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME', '')
+AWS_S3_REGION_NAME = config('AWS_S3_REGION_NAME', default='us-east-1')
 AWS_IS_GZIPPED = True
 AWS_S3_ENDPOINT_URL = f'https://s3.{AWS_S3_REGION_NAME}.amazonaws.com'
 AWS_S3_FILE_OVERWRITE = False
@@ -295,8 +304,11 @@ SPECTACULAR_SETTINGS = {
 # prevent whitenoise: prevent Django throwing an error for references of static files which don't exist
 WHITENOISE_MANIFEST_STRICT = False
 
-BASE_URL = os.environ.get('BASE_URL', 'https://platform.acrylic.la/')
-FRONTEND_BASE_URL = os.environ.get('FRONTEND_BASE_URL', 'https://app.acrylic.la/')
+#BASE_URL = os.environ.get('BASE_URL', 'https://platform.acrylic.la/')
+BASE_URL = os.environ.get('BASE_URL', 'http://127.0.0.1:8000/')
+#FRONTEND_BASE_URL = os.environ.get('FRONTEND_BASE_URL', 'https://app.acrylic.la/')
+FRONTEND_BASE_URL = os.environ.get('FRONTEND_BASE_URL', 'http://localhost:4200/')
+
 
 REST_REGISTRATION = {
     # user profile
@@ -387,7 +399,9 @@ IMPORT_FORMATS = [CSV, XLSX]
 EXPORT_FORMATS = [CSV, XLSX]
 
 # Activate Django-Heroku.
+# Cerca del final del archivo
 django_heroku.settings(locals())
+
 
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
@@ -409,3 +423,7 @@ sentry_sdk.init(
     # django.contrib.auth) you may enable sending PII data.
     send_default_pii=True
 )
+
+
+print(AWS_S3_REGION_NAME,AWS_S3_ENDPOINT_URL,"?????????")
+

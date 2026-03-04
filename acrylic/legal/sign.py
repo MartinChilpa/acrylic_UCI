@@ -4,7 +4,10 @@ from django.contrib.staticfiles import finders
 from django.core.files.base import ContentFile
 from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
-import weasyprint
+try:
+    import weasyprint
+except Exception:
+    weasyprint = None
 from account.models import Document
 from legal.signwell import Signwell
 

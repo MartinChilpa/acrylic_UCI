@@ -205,7 +205,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 ENVIRONMENT = config('ENVIRONMENT', 'DEV')
 
 # Email settings
-EMAIL_BACKEND = 'django_ses.SESBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_HOST = os.environ.get('EMAIL_HOST', '')
 EMAIL_PORT = 25
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
